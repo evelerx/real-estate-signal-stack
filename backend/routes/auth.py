@@ -8,8 +8,8 @@ from services.db import get_db
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 class LoginInput(BaseModel):
-    username: str
-    password: str
+    username: str | None = "admin"
+    password: str | None = None
 
 @router.post("/login")
 def login(payload: LoginInput, db: Session = Depends(get_db)):

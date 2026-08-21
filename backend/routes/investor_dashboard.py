@@ -4,7 +4,7 @@ from services.rbac import require_roles
 
 router = APIRouter(prefix="/dashboard", tags=["Investor Dashboard"])
 
-ALLOWED_DASHBOARD_ROLES = ["ceo", "data_analyst", "subscriptionowner"]
+ALLOWED_DASHBOARD_ROLES = ["admin"]
 
 _KPIS = {
     "total_portfolio_value_m": {"value": 17.3, "delta_pct": -2.8, "previous_m": 17.8},

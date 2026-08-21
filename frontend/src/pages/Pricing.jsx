@@ -27,15 +27,15 @@ export default function Pricing() {
   const [referralCode, setReferralCode] = useState("");
   const [paymentMessage, setPaymentMessage] = useState("");
 
-  const canAccessEnterprise = role === "ceo" || (role === "subscriptionowner" && subscriptionUnlocked);
+  const canAccessEnterprise = role === "admin" || subscriptionUnlocked;
 
   function handlePaypalDemo() {
     if (!isAuthenticated) {
       navigate("/admin");
       return;
     }
-    if (role !== "subscriptionowner" && role !== "ceo") {
-      setPaymentMessage("Login as CEO or Subscription Owner to unlock this plan.");
+    if (role !== "admin") {
+      setPaymentMessage("Login as Admin to unlock this plan.");
       return;
     }
     unlockWithDemoPaypal();
@@ -47,8 +47,8 @@ export default function Pricing() {
       navigate("/admin");
       return;
     }
-    if (role !== "subscriptionowner" && role !== "ceo") {
-      setPaymentMessage("Login as CEO or Subscription Owner to apply referral unlock.");
+    if (role !== "admin") {
+      setPaymentMessage("Login as Admin to apply referral unlock.");
       return;
     }
     try {
@@ -75,7 +75,7 @@ export default function Pricing() {
           <nav className="nav">
             <a href="/">Home</a>
             <a href="/pricing">Pricing</a>
-            <a href="/admin">Staff Access</a>
+            <a href="/admin">Admin Access</a>
           </nav>
 
           <div className="header-actions">
@@ -83,7 +83,7 @@ export default function Pricing() {
               Back to Home
             </button>
             <button className="btn primary" onClick={() => window.location.assign("/admin")}>
-              Staff Access
+              Admin Access
             </button>
           </div>
         </div>
@@ -247,11 +247,11 @@ export default function Pricing() {
           <div className="card pricing-access-card">
             <h3>Enterprise Access</h3>
             <p className="pricing-desc">
-              Premium features are available to <strong>CEO</strong> and <strong>Subscription Owner</strong> accounts.
+              Premium features are available to the <strong>Admin</strong> account.
             </p>
             <div className="pricing-access-actions">
               <button className="btn ghost" onClick={() => navigate("/admin")}>
-                Staff Login
+                Admin Login
               </button>
               <button
                 className="btn primary"

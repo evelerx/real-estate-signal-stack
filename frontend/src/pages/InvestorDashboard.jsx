@@ -183,7 +183,7 @@ export default function InvestorDashboard() {
             Open Pricing / Unlock
           </button>
           <button className="investor-btn" onClick={() => navigate("/admin")}>
-            Back to Staff Access
+            Back to Admin Access
           </button>
         </div>
       </div>

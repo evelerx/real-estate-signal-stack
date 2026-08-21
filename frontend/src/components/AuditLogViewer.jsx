@@ -6,7 +6,7 @@ export default function AuditLogViewer() {
   const [logs, setLogs] = useState([]);
 
   useEffect(() => {
-    if (role !== "ceo") return;
+    if (role !== "admin") return;
 
     fetch("http://127.0.0.1:8000/internal/analyst/audit", {
       headers: {
@@ -17,7 +17,7 @@ export default function AuditLogViewer() {
       .then(setLogs);
   }, [role, accessToken]);
 
-  if (role !== "ceo") return null;
+  if (role !== "admin") return null;
 
   return (
     <div className="audit-log">

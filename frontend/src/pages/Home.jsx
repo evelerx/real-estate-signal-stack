@@ -146,7 +146,7 @@ export default function Home() {
 
           <div className="header-actions">
             <button className="btn ghost" onClick={goToAdmin}>
-              Staff Access
+              Admin Access
             </button>
             <button className="btn primary" onClick={() => scrollToId("platform")}>
               Explore Demo

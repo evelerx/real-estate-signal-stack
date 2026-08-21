@@ -7,7 +7,7 @@ from services.auth_service import hash_password
 from services.db import get_db
 from services.rbac import require_roles
 
-ALLOWED_ROLES = {"data_analyst", "general", "subscriptionowner"}
+ALLOWED_ROLES = {"admin"}
 
 router = APIRouter(prefix="/internal/staff", tags=["Staff Admin"])
 
@@ -15,7 +15,7 @@ router = APIRouter(prefix="/internal/staff", tags=["Staff Admin"])
 @router.get("/users", response_model=list[StaffUserOut])
 def list_users(
     db: Session = Depends(get_db),
-    _user=Depends(require_roles(["ceo"])),
+    _user=Depends(require_roles(["admin"])),
 ):
     return db.query(StaffUser).order_by(StaffUser.created_at.desc()).all()
 
@@ -24,7 +24,7 @@ def list_users(
 def create_user(
     payload: StaffUserCreate,
     db: Session = Depends(get_db),
-    _user=Depends(require_roles(["ceo"])),
+    _user=Depends(require_roles(["admin"])),
 ):
     role = payload.role.strip().lower()
     if role not in ALLOWED_ROLES:
@@ -51,7 +51,7 @@ def update_user(
     user_id: int,
     payload: StaffUserUpdate,
     db: Session = Depends(get_db),
-    _user=Depends(require_roles(["ceo"])),
+    _user=Depends(require_roles(["admin"])),
 ):
     user = db.query(StaffUser).filter(StaffUser.id == user_id).first()
     if not user:
@@ -78,7 +78,7 @@ def update_user(
 def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
-    _user=Depends(require_roles(["ceo"])),
+    _user=Depends(require_roles(["admin"])),
 ):
     user = db.query(StaffUser).filter(StaffUser.id == user_id).first()
     if not user:

@@ -2,13 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GeoSelector from "../components/GeoSelector";
 import { useAuth } from "../context/AuthContext";
-import {
-  loginStaff,
-  fetchStaffUsers,
-  createStaffUser,
-  updateStaffUser,
-  deleteStaffUser,
-} from "../services/staffApi";
+import { loginStaff } from "../services/staffApi";
 import {
   addBrokerDeal,
   addListing,
@@ -50,10 +44,7 @@ import {
 } from "../services/openRouterConfig";
 
 const ROLE_LABELS = {
-  ceo: "CEO",
-  data_analyst: "Data Analyst",
-  general: "General",
-  subscriptionowner: "Subscription Owner",
+  admin: "Admin",
 };
 
 const CITY_INTELLIGENCE_CITIES = [
@@ -367,8 +358,7 @@ export default function Admin() {
   const { role, accessToken, isAuthenticated, login, logout } = useAuth();
 
   const [loginForm, setLoginForm] = useState({
-    username: "",
-    password: "",
+    username: "admin",
     error: "",
     loading: false,
   });
@@ -402,13 +392,6 @@ export default function Admin() {
     source: "",
   });
 
-  const [staffUsers, setStaffUsers] = useState([]);
-  const [staffForm, setStaffForm] = useState({
-    username: "",
-    password: "",
-    role: "general",
-  });
-  const [staffError, setStaffError] = useState("");
   const [areaIntel, setAreaIntel] = useState(null);
   const [cityIntelRows, setCityIntelRows] = useState([]);
   const [cityIntelError, setCityIntelError] = useState("");
@@ -427,11 +410,10 @@ export default function Admin() {
   const [openRouterForm, setOpenRouterForm] = useState(() => getOpenRouterConfig());
   const [openRouterMessage, setOpenRouterMessage] = useState("");
 
-  const canManageAll = role === "ceo";
-  const canManageData = role === "data_analyst" || role === "ceo";
-  const canSubscriptionOwner = role === "subscriptionowner";
-  const canManageGeneral = role === "general" || canManageData;
-  const canViewData = role === "general" || canManageData || canSubscriptionOwner;
+  const canManageAll = role === "admin";
+  const canManageData = role === "admin";
+  const canManageGeneral = role === "admin";
+  const canViewData = role === "admin";
 
   function toNumber(value) {
     const n = Number(value);
@@ -503,11 +485,10 @@ export default function Admin() {
     try {
       setLoginForm((prev) => ({ ...prev, loading: true, error: "" }));
       const tokens = await loginStaff({
-        username: loginForm.username.trim().toLowerCase(),
-        password: loginForm.password,
+        username: loginForm.username.trim().toLowerCase() || "admin",
       });
       login(tokens);
-      setLoginForm({ username: "", password: "", error: "", loading: false });
+      setLoginForm({ username: "admin", error: "", loading: false });
     } catch (err) {
       setLoginForm((prev) => ({
         ...prev,
@@ -587,12 +568,6 @@ export default function Admin() {
     if (!selection.area) return;
     updateValidation(selection.area, index, { [field]: value });
     await persistIntel(selection.area);
-  }
-
-  async function refreshStaff() {
-    if (!accessToken) return;
-    const users = await fetchStaffUsers(accessToken);
-    setStaffUsers(users);
   }
 
   async function refreshCityIntelligence() {
@@ -902,11 +877,6 @@ export default function Admin() {
   }
 
   useEffect(() => {
-    if (!canManageAll || !accessToken) return;
-    refreshStaff().catch(() => setStaffError("Failed to load staff users"));
-  }, [canManageAll, accessToken]);
-
-  useEffect(() => {
     if (!isAuthenticated || !accessToken) return;
     refreshCityIntelligence().catch((err) =>
       setCityIntelError(err?.message || "Failed to load city intelligence")
@@ -932,42 +902,6 @@ export default function Admin() {
     );
   }, [selection.area, accessToken]);
 
-  async function handleCreateStaff(e) {
-    e.preventDefault();
-    if (!accessToken) return;
-    try {
-      setStaffError("");
-      await createStaffUser(accessToken, {
-        username: staffForm.username.trim().toLowerCase(),
-        password: staffForm.password,
-        role: staffForm.role,
-      });
-      setStaffForm({ username: "", password: "", role: "general" });
-      refreshStaff();
-    } catch (err) {
-      setStaffError(err.message || "Failed to create user");
-    }
-  }
-
-  async function handleUpdateStaff(userId, payload) {
-    if (!accessToken) return;
-    try {
-      await updateStaffUser(accessToken, userId, payload);
-      refreshStaff();
-    } catch (err) {
-      setStaffError(err.message || "Failed to update user");
-    }
-  }
-
-  async function handleDeleteStaff(userId) {
-    if (!accessToken) return;
-    try {
-      await deleteStaffUser(accessToken, userId);
-      refreshStaff();
-    } catch (err) {
-      setStaffError(err.message || "Failed to delete user");
-    }
-  }
 
   return (
     <div className="page admin-page">
@@ -1005,21 +939,21 @@ export default function Admin() {
           <div className="hero-shell">
             <div className="hero-content">
               <p className="eyebrow">Internal Operations</p>
-              <h1>Staff access for real estate signal operations.</h1>
+              <h1>Admin access for real estate signal operations.</h1>
               <p className="lead">
                 A secure workspace to curate listings, manage analyst inputs, and
                 validate market signals before they reach clients.
               </p>
               <div className="cta-row">
                 <button className="btn primary" onClick={() => scrollToId("access")}>
-                  Unlock Staff Access
+                  Unlock Admin Access
                 </button>
                 <button className="btn ghost" onClick={() => scrollToId("features")}>
                   View Console Features
                 </button>
               </div>
               <div className="trust-row">
-                <span>Role-based control lanes</span>
+                <span>Single admin control lane</span>
                 <span>Audit-ready change tracking</span>
               </div>
             </div>
@@ -1032,9 +966,9 @@ export default function Admin() {
                   <p className="metric-trend positive">All systems nominal</p>
                 </div>
                 <div className="metric-card">
-                  <p className="metric-label">Access Tiers</p>
-                  <p className="metric-value">3</p>
-                  <p className="metric-trend neutral">CEO, Analyst, General</p>
+                  <p className="metric-label">Access Mode</p>
+                  <p className="metric-value">Admin</p>
+                  <p className="metric-trend neutral">One project operator</p>
                 </div>
                 <div className="metric-card">
                   <p className="metric-label">Signal Inputs</p>
@@ -1090,7 +1024,7 @@ export default function Admin() {
               <div className="card">
                 <h3>Analyst Review Layer</h3>
                 <p>
-                  Validate and clean inputs with role-aware permissions and
+                  Validate and clean inputs with admin-controlled permissions and
                   structured updates for each corridor.
                 </p>
               </div>
@@ -1107,16 +1041,16 @@ export default function Admin() {
 
         <section className="section signal-section" id="access">
           <div className="section-header">
-            <p className="eyebrow">Access Control</p>
-            <h2>Enter staff credentials to unlock the console.</h2>
-            <p>Only CEO-issued profiles can access staff roles.</p>
+            <p className="eyebrow">Admin Access</p>
+            <h2>Unlock the admin console.</h2>
+            <p>Use the project admin portal to manage signals, live data keys, and dashboards.</p>
           </div>
 
           {!isAuthenticated ? (
             <div className="signal-grid admin-access-grid">
               <div className="card admin-access-card">
-                <h3>Staff Login</h3>
-                <p>Enter your username and password.</p>
+                <h3>Admin Portal</h3>
+                <p>No password is required for the project demo console.</p>
                 <form onSubmit={handleLoginSubmit} className="admin-form">
                   <input
                     type="text"
@@ -1127,20 +1061,11 @@ export default function Admin() {
                     }
                     required
                   />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    value={loginForm.password}
-                    onChange={(e) =>
-                      setLoginForm({ ...loginForm, password: e.target.value, error: "" })
-                    }
-                    required
-                  />
                   {loginForm.error && (
                     <span className="admin-error">{loginForm.error}</span>
                   )}
                   <button className="btn primary" type="submit" disabled={loginForm.loading}>
-                    {loginForm.loading ? "Authenticating..." : "Unlock"}
+                    {loginForm.loading ? "Unlocking..." : "Unlock Admin Console"}
                   </button>
                 </form>
               </div>
@@ -1150,7 +1075,7 @@ export default function Admin() {
                 <p>Request an internal access brief from the investment desk.</p>
                 <div className="contact-list">
                   <div>
-                    <span className="contact-label">General</span>
+                    <span className="contact-label">Support</span>
                     <span>niharlakhani2@gmail.com</span>
                   </div>
                   <div>
@@ -1159,7 +1084,7 @@ export default function Admin() {
                   </div>
                 </div>
                 <button className="btn primary full" type="button">
-                  Email Staff Access
+                  Email Admin Access
                 </button>
               </div>
             </div>
@@ -1171,24 +1096,20 @@ export default function Admin() {
               <div className="admin-status-actions">
                 <p>Access unlocked. Proceed to the workflow tools below.</p>
                 <div className="admin-status-buttons">
-                  {(canManageData || canSubscriptionOwner) && (
-                    <>
-                      <button
-                        className="btn primary"
-                        onClick={() => navigate("/investor-dashboard")}
-                        type="button"
-                      >
-                        Open Investor Dashboard
-                      </button>
-                      <button
-                        className="btn ghost"
-                        onClick={() => navigate("/enterprise-workbench")}
-                        type="button"
-                      >
-                        Open Enterprise Workbench
-                      </button>
-                    </>
-                  )}
+                  <button
+                    className="btn primary"
+                    onClick={() => navigate("/investor-dashboard")}
+                    type="button"
+                  >
+                    Open Investor Dashboard
+                  </button>
+                  <button
+                    className="btn ghost"
+                    onClick={() => navigate("/enterprise-workbench")}
+                    type="button"
+                  >
+                    Open Enterprise Workbench
+                  </button>
                   <button
                     className="btn ghost"
                     onClick={() => navigate("/data-sheet")}
@@ -1352,7 +1273,7 @@ export default function Admin() {
               {canManageGeneral && (
                 <div className="admin-form-grid">
                   <form onSubmit={handleSubmitListing} className="card admin-form">
-                    <h3>General Inputs - Developer Listings</h3>
+                    <h3>Admin Inputs - Developer Listings</h3>
                     <input
                       name="company"
                       placeholder="Company (e.g., Lodha)"
@@ -1385,7 +1306,7 @@ export default function Admin() {
                   </form>
 
                   <form onSubmit={handleSubmitDeal} className="card admin-form">
-                    <h3>General Inputs - Broker Submitted Deals</h3>
+                    <h3>Admin Inputs - Broker Submitted Deals</h3>
                     <input
                       name="broker"
                       placeholder="Broker Name"
@@ -1423,7 +1344,7 @@ export default function Admin() {
                   </form>
 
                   <form onSubmit={handleSubmitValidation} className="card admin-form">
-                    <h3>General Inputs - On-Demand Validations</h3>
+                    <h3>Admin Inputs - On-Demand Validations</h3>
                     <input
                       name="summary"
                       placeholder="Validation Summary"
@@ -1796,7 +1717,7 @@ export default function Admin() {
 
               {canManageData && areaIntel && (
                 <div className="card admin-review">
-                  <h3>Data Analyst - Manage General Inputs</h3>
+                  <h3>Admin - Manage Signal Inputs</h3>
                   <p>Editable grid for the selected area.</p>
 
                   <div className="admin-review-grid">
@@ -1949,7 +1870,7 @@ export default function Admin() {
 
               {!canManageData && canViewData && areaIntel && (
                 <div className="card admin-review">
-                  <h3>General - Read Only View</h3>
+                  <h3>Read Only Signal View</h3>
                   <p>View submitted inputs for the selected area.</p>
                   <div className="admin-review-grid">
                     <div>
@@ -2001,103 +1922,6 @@ export default function Admin() {
                 </div>
               )}
 
-              {canManageAll && (
-                <div className="card admin-ceo">
-                  <h3>CEO Staff Access Portal</h3>
-                  <p>Manage staff profiles and role access.</p>
-
-                  <form className="admin-form" onSubmit={handleCreateStaff}>
-                    <input
-                      name="username"
-                      placeholder="Username"
-                      value={staffForm.username}
-                      onChange={(e) =>
-                        setStaffForm({ ...staffForm, username: e.target.value })
-                      }
-                      required
-                    />
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Temporary Password"
-                      minLength={6}
-                      value={staffForm.password}
-                      onChange={(e) =>
-                        setStaffForm({ ...staffForm, password: e.target.value })
-                      }
-                      required
-                    />
-                    <select
-                      value={staffForm.role}
-                      onChange={(e) =>
-                        setStaffForm({ ...staffForm, role: e.target.value })
-                      }
-                    >
-                      <option value="general">General</option>
-                      <option value="data_analyst">Data Analyst</option>
-                      <option value="subscriptionowner">Subscription Owner</option>
-                    </select>
-                    <button className="btn primary" type="submit">
-                      Create Staff User
-                    </button>
-                    {staffError && <span className="admin-error">{staffError}</span>}
-                  </form>
-
-                  <div className="admin-staff-list">
-                    <h4>Existing Staff Profiles</h4>
-                    {staffUsers.length === 0 ? (
-                      <p>No staff users yet.</p>
-                    ) : (
-                      staffUsers.map((user) => (
-                        <div key={user.id} className="admin-staff-row">
-                          <div>
-                            <strong>{user.username}</strong>
-                            <span>{ROLE_LABELS[user.role] || user.role}</span>
-                          </div>
-                          <div>
-                            <label>
-                              Role
-                              <select
-                                value={user.role}
-                                onChange={(e) =>
-                                  handleUpdateStaff(user.id, { role: e.target.value })
-                                }
-                              >
-                                <option value="general">General</option>
-                                <option value="data_analyst">Data Analyst</option>
-                                <option value="subscriptionowner">Subscription Owner</option>
-                              </select>
-                            </label>
-                            <label>
-                              Status
-                              <select
-                                value={user.is_active ? "active" : "inactive"}
-                                onChange={(e) =>
-                                  handleUpdateStaff(user.id, {
-                                    is_active: e.target.value === "active",
-                                  })
-                                }
-                              >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                              </select>
-                            </label>
-                          </div>
-                          <div className="admin-staff-actions">
-                            <button
-                              className="btn ghost"
-                              type="button"
-                              onClick={() => handleDeleteStaff(user.id)}
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           </section>
         )}

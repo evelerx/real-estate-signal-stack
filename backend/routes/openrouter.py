@@ -10,7 +10,7 @@ from services.rbac import require_roles
 
 router = APIRouter(prefix="/openrouter", tags=["OpenRouter"])
 
-ALLOWED_ROLES = ["ceo", "data_analyst"]
+ALLOWED_ROLES = ["admin"]
 
 
 class OpenRouterChatInput(BaseModel):

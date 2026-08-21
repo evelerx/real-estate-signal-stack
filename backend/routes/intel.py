@@ -16,9 +16,9 @@ from schemas.intel import (
 from services.db import get_db
 from services.rbac import require_roles
 
-ALLOWED_ROLES = ["ceo", "data_analyst", "general", "subscriptionowner"]
-ALLOWED_EDITOR_ROLES = ["ceo", "data_analyst"]
-ALLOWED_MANUAL_INPUT_ROLES = ["ceo", "data_analyst", "general"]
+ALLOWED_ROLES = ["admin"]
+ALLOWED_EDITOR_ROLES = ["admin"]
+ALLOWED_MANUAL_INPUT_ROLES = ["admin"]
 
 router = APIRouter(prefix="/internal/intel", tags=["Intel Inputs"])
 

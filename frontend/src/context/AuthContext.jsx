@@ -9,6 +9,7 @@ function loadStoredAuth() {
     const raw = localStorage.getItem(AUTH_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
+    if (parsed.role && parsed.role !== "admin") return null;
     return {
       role: parsed.role || "viewer",
       accessToken: parsed.accessToken || null,
@@ -37,10 +38,7 @@ function loadStoredSubscription() {
 /**
  * Roles:
  * - viewer (default)
- * - ceo
- * - data_analyst
- * - general
- * - subscriptionowner
+ * - admin
  */
 export function AuthProvider({ children }) {
   const stored = loadStoredAuth();
@@ -68,7 +66,7 @@ export function AuthProvider({ children }) {
      * {
      *   access_token: string,
      *   refresh_token: string,
-     *   role: "viewer" | "analyst" | "admin"
+     *   role: "viewer" | "admin"
      * }
      */
     setAccessToken(tokens.access_token);
@@ -141,10 +139,7 @@ export function AuthProvider({ children }) {
     setRole,
 
     isViewer: role === "viewer",
-    isCeo: role === "ceo",
-    isAnalyst: role === "data_analyst",
-    isGeneral: role === "general",
-    isSubscriptionOwner: role === "subscriptionowner",
+    isAdmin: role === "admin",
 
     // --- new ---
     accessToken,

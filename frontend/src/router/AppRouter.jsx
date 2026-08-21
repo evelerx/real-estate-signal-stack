@@ -18,10 +18,7 @@ export default function AppRouter() {
         <Route
           path="/investor-dashboard"
           element={
-            <ProtectedRoute
-              allow={["ceo", "subscriptionowner", "data_analyst"]}
-              requireEnterpriseSubscription
-            >
+            <ProtectedRoute allow={["admin"]}>
               <InvestorDashboard />
             </ProtectedRoute>
           }
@@ -29,10 +26,7 @@ export default function AppRouter() {
         <Route
           path="/enterprise-workbench"
           element={
-            <ProtectedRoute
-              allow={["ceo", "subscriptionowner", "data_analyst"]}
-              requireEnterpriseSubscription
-            >
+            <ProtectedRoute allow={["admin"]}>
               <EnterpriseWorkbench />
             </ProtectedRoute>
           }
@@ -40,7 +34,7 @@ export default function AppRouter() {
         <Route
           path="/data-sheet"
           element={
-            <ProtectedRoute allow={["ceo", "subscriptionowner", "data_analyst", "general"]}>
+            <ProtectedRoute allow={["admin"]}>
               <DataSheet />
             </ProtectedRoute>
           }
@@ -48,10 +42,7 @@ export default function AppRouter() {
         <Route
           path="/heatmap"
           element={
-            <ProtectedRoute
-              allow={["ceo", "subscriptionowner"]}
-              requireEnterpriseSubscription
-            >
+            <ProtectedRoute allow={["admin"]}>
               <Heatmap />
             </ProtectedRoute>
           }

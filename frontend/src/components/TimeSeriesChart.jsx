@@ -85,7 +85,7 @@ export default function TimeSeriesChart({
   }, [initialMetric]);
 
   /* ---------------- ADMIN ADJUSTED SERIES ---------------- */
-  const isEditor = role === "ceo" || role === "data_analyst";
+  const isEditor = role === "admin";
 
   const adjustedData =
     isEditor

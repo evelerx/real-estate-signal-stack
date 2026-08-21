@@ -16,7 +16,7 @@ from services.rbac import require_roles
 
 router = APIRouter(prefix="/enterprise", tags=["Enterprise Intelligence"])
 
-ALLOWED_ROLES = ["ceo", "data_analyst", "subscriptionowner"]
+ALLOWED_ROLES = ["admin"]
 
 
 class CapitalAllocationSimInput(BaseModel):

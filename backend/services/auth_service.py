@@ -19,8 +19,7 @@ ACCESS_TTL_MIN = int(os.getenv("ACCESS_TTL_MIN", "480"))
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-CEO_USERNAME = os.getenv("CEO_USERNAME", "ceo")
-CEO_PASSWORD = os.getenv("CEO_PASSWORD", "ceo123")
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 
 def create_token(data: dict, expires_delta: timedelta):
     payload = data.copy()
@@ -52,19 +51,22 @@ def verify_password(password: str, stored: str) -> bool:
     return hmac.compare_digest(test, hashed)
 
 
-def authenticate(username: str, password: str, db: Session):
-    normalized = username.strip().lower()
-    if normalized == CEO_USERNAME.lower() and password == CEO_PASSWORD:
-        return {"username": normalized, "role": "ceo"}
+def authenticate(username: str | None = None, password: str | None = None, db: Session | None = None):
+    normalized = (username or ADMIN_USERNAME).strip().lower() or ADMIN_USERNAME
+    if normalized == ADMIN_USERNAME.lower():
+        return {"username": normalized, "role": "admin"}
+
+    if db is None:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
     user = (
         db.query(StaffUser)
         .filter(StaffUser.username == normalized, StaffUser.is_active.is_(True))
         .first()
     )
-    if not user or not verify_password(password, user.password_hash):
+    if not user or not password or not verify_password(password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {"username": user.username, "role": user.role}
+    return {"username": user.username, "role": "admin"}
 
 def issue_tokens(user: dict):
     access = create_token(
