@@ -1,7 +1,8 @@
 import sqlite3
 import json
+import os
 
-DB = "analyst_flags.db"
+DB = os.getenv("ANALYST_FLAGS_DB", "analyst_flags.db")
 
 def save_flags(area, snapshot, analyst_id, flags):
     conn = sqlite3.connect(DB)

@@ -1,3 +1,5 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -6,7 +8,7 @@ import models.staff_user  # noqa: F401 - ensure table is registered
 import models.intel_entry  # noqa: F401 - ensure table is registered
 import models.consultation_request  # noqa: F401 - ensure table is registered
 
-DATABASE_URL = "sqlite:///./staff_access.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./staff_access.db")
 
 engine = create_engine(
     DATABASE_URL,
