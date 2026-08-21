@@ -1,16 +1,41 @@
-# React + Vite
+# Real Estate Signal Stack Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This Vite React app is the presentation and dashboard layer for the Real Estate Signal Stack final-year project.
 
-Currently, two official plugins are available:
+## Main Screens
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `/` - project introduction with 3D visual explanation
+- `/admin` - passwordless Admin portal for data, API keys, and workflow tools
+- `/investor-dashboard` - protected investor intelligence dashboard
+- `/enterprise-workbench` - protected risk and allocation workbench
+- `/data-sheet` - protected master intelligence sheet
 
-## React Compiler
+## Model Explanation
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The analysis report displays the scoring methodology returned by the backend:
 
-## Expanding the ESLint configuration
+```text
+/api/model/methodology
+/api/areas/{area_id}
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The backend currently exposes a transparent hybrid ML scoring model with normalized inputs, feature weights, logistic risk probability, and confidence scoring metadata.
+
+Full methodology notes are in:
+
+```text
+../docs/model-methodology.md
+```
+
+## Run Locally
+
+```bash
+npm install
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
