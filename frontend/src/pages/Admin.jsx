@@ -42,6 +42,7 @@ import {
   getOpenRouterConfig,
   saveOpenRouterConfig,
 } from "../services/openRouterConfig";
+import { fetchModelAudit, fetchModelMethodology } from "../services/modelApi";
 
 const ROLE_LABELS = {
   admin: "Admin",
@@ -409,6 +410,9 @@ export default function Admin() {
   const [liveApiMessage, setLiveApiMessage] = useState("");
   const [openRouterForm, setOpenRouterForm] = useState(() => getOpenRouterConfig());
   const [openRouterMessage, setOpenRouterMessage] = useState("");
+  const [modelMethodology, setModelMethodology] = useState(null);
+  const [modelAudit, setModelAudit] = useState(null);
+  const [modelError, setModelError] = useState("");
 
   const canManageAll = role === "admin";
   const canManageData = role === "admin";
@@ -477,6 +481,20 @@ export default function Admin() {
       );
     } catch (err) {
       setOpenRouterMessage(err.message || "Could not verify OpenRouter key.");
+    }
+  }
+
+  async function refreshModelEvidence() {
+    try {
+      setModelError("");
+      const [methodology, audit] = await Promise.all([
+        fetchModelMethodology(),
+        fetchModelAudit(),
+      ]);
+      setModelMethodology(methodology);
+      setModelAudit(audit);
+    } catch (err) {
+      setModelError(err.message || "Failed to load model evidence");
     }
   }
 
@@ -878,6 +896,7 @@ export default function Admin() {
 
   useEffect(() => {
     if (!isAuthenticated || !accessToken) return;
+    refreshModelEvidence();
     refreshCityIntelligence().catch((err) =>
       setCityIntelError(err?.message || "Failed to load city intelligence")
     );
@@ -1268,6 +1287,71 @@ export default function Admin() {
                     <span className="admin-field-help">{openRouterMessage}</span>
                   )}
                 </form>
+              )}
+
+              {(canManageData || canManageAll) && (
+                <div className="card admin-form">
+                  <div>
+                    <h3>ML Model Evidence</h3>
+                    <p>
+                      The scoring model is loaded from the paper-ready JSON config and exposed
+                      through live API endpoints for evaluation.
+                    </p>
+                  </div>
+                  <div className="trust-row">
+                    <span>Audit: {modelAudit?.status || "loading"}</span>
+                    <span>Rows: {modelAudit?.rows_checked ?? "-"}</span>
+                    <span>
+                      Source:{" "}
+                      {modelAudit?.source_status ||
+                        modelMethodology?.modules?.[0]?.formula?.source_status ||
+                        "loading"}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="admin-read-row">
+                      <span>Config</span>
+                      <span>
+                        {modelAudit?.config_path ||
+                          modelMethodology?.modules?.[0]?.formula?.config_path ||
+                          "backend/config/model_config.json"}
+                      </span>
+                    </div>
+                    <div className="admin-read-row">
+                      <span>Score Range</span>
+                      <span>
+                        {modelAudit?.score_range
+                          ? `${modelAudit.score_range.min} - ${modelAudit.score_range.max}`
+                          : "-"}
+                      </span>
+                    </div>
+                    <div className="admin-read-row">
+                      <span>Risk Range</span>
+                      <span>
+                        {modelAudit?.risk_probability_range_pct
+                          ? `${modelAudit.risk_probability_range_pct.min}% - ${modelAudit.risk_probability_range_pct.max}%`
+                          : "-"}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <h4>Feature Weights</h4>
+                    {Object.entries(
+                      modelMethodology?.modules?.[0]?.formula?.feature_weights || {}
+                    ).map(([key, value]) => (
+                      <div key={key} className="admin-read-row">
+                        <span>{key.replaceAll("_", " ")}</span>
+                        <span>{Number(value).toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="admin-status-buttons">
+                    <button className="btn ghost" type="button" onClick={refreshModelEvidence}>
+                      Refresh Model Evidence
+                    </button>
+                  </div>
+                  {modelError && <span className="admin-error">{modelError}</span>}
+                </div>
               )}
 
               {canManageGeneral && (
