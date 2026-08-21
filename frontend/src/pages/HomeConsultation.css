@@ -1,0 +1,99 @@
+.consult-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 16, 24, 0.62);
+  display: grid;
+  place-items: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.consult-modal {
+  width: min(680px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  background: #ffffff;
+  border: 1px solid rgba(18, 17, 15, 0.14);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(13, 18, 25, 0.24);
+  padding: 1.15rem;
+}
+
+.consult-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 0.9rem;
+}
+
+.consult-modal-head h3 {
+  margin-bottom: 0.3rem;
+}
+
+.consult-modal-head p {
+  color: #5b6672;
+}
+
+.consult-modal-close {
+  border: 1px solid rgba(18, 17, 15, 0.24);
+  background: #fff;
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.consult-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.consult-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.7rem;
+}
+
+.consult-form input,
+.consult-form select,
+.consult-form textarea {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(20, 28, 36, 0.2);
+  font: inherit;
+  background: #fff;
+}
+
+.consult-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.consult-inline-note {
+  color: #596876;
+  font-size: 0.88rem;
+}
+
+.consult-submit-row {
+  display: flex;
+  gap: 0.65rem;
+  justify-content: flex-end;
+}
+
+.consult-error {
+  border: 1px solid #efc0c0;
+  color: #8f1f1f;
+  background: #fff2f2;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+}
+
+.consult-success {
+  border: 1px solid #b8e0c6;
+  color: #175234;
+  background: #effaf3;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+}

@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Python virtual environments and caches
+venv/
+backend/venv/
+frontend/venv/
+__pycache__/
+*.py[cod]
+
+# Build output
+dist/
+frontend/dist/
+
+# Local environment and runtime data
+.env
+*.db
+
+# Local verification artifacts
+frontend/project-home-*.png
+frontend/src/cd
+*.pycd
+
+# Editor/system noise
+.vscode/
+.DS_Store
+Thumbs.db

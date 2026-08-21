@@ -1,0 +1,138 @@
+.sheet-shell {
+  min-height: 100vh;
+  padding: 24px;
+  background: #f4f1ea;
+  color: #1f2f3d;
+}
+
+.sheet-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.sheet-kicker {
+  margin: 0 0 6px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7a5a2f;
+}
+
+.sheet-header h1 {
+  margin: 0;
+}
+
+.sheet-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sheet-btn {
+  border: 1px solid #32485d;
+  background: #fff;
+  color: #213546;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sheet-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.sheet-btn-primary {
+  background: #213546;
+  color: #fefefe;
+}
+
+.sheet-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.sheet-filters input,
+.sheet-filters select {
+  border: 1px solid #b6c1c9;
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px;
+  color: #1f2f3d;
+}
+
+.sheet-meta {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0 10px;
+  color: #556778;
+  font-size: 14px;
+}
+
+.sheet-table-wrap {
+  overflow: auto;
+  max-height: 70vh;
+  border: 1px solid #c8d1d7;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.sheet-table {
+  width: 100%;
+  min-width: 1200px;
+  border-collapse: collapse;
+}
+
+.sheet-table th,
+.sheet-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8ed;
+  text-align: left;
+  vertical-align: top;
+}
+
+.sheet-table tbody tr {
+  cursor: pointer;
+}
+
+.sheet-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #eef3f8;
+}
+
+.sheet-details-row td {
+  background: #f8fafc;
+}
+
+.sheet-details-row pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12px;
+  color: #2d4253;
+}
+
+.sheet-pagination {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.sheet-error {
+  border: 1px solid #f1b4b4;
+  background: #ffe9e9;
+  color: #7a1e1e;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.sheet-muted {
+  color: #5a6f80;
+}

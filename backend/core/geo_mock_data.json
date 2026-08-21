@@ -1,0 +1,1389 @@
+{
+  "summary": {
+    "states": 9,
+    "cities": 23,
+    "areas": 69
+  },
+  "rows": [
+    {
+      "state": "Gujarat",
+      "city": "Ahmedabad",
+      "area": "SG Highway",
+      "area_key": "sg highway",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 78,
+      "infrastructure": 61,
+      "builder_reliability": 56,
+      "supply_pressure": 61,
+      "search_heat": 46,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Gujarat",
+      "city": "Ahmedabad",
+      "area": "Bopal",
+      "area_key": "bopal",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 77,
+      "infrastructure": 66,
+      "builder_reliability": 61,
+      "supply_pressure": 66,
+      "search_heat": 70,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Gujarat",
+      "city": "Ahmedabad",
+      "area": "Thaltej",
+      "area_key": "thaltej",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 57,
+      "infrastructure": 60,
+      "builder_reliability": 55,
+      "supply_pressure": 60,
+      "search_heat": 72,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Gujarat",
+      "city": "Surat",
+      "area": "Vesu",
+      "area_key": "vesu",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 82,
+      "infrastructure": 69,
+      "builder_reliability": 64,
+      "supply_pressure": 69,
+      "search_heat": 54,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Gujarat",
+      "city": "Surat",
+      "area": "Adajan",
+      "area_key": "adajan",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 75,
+      "infrastructure": 83,
+      "builder_reliability": 78,
+      "supply_pressure": 45,
+      "search_heat": 46,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Gujarat",
+      "city": "Surat",
+      "area": "Pal",
+      "area_key": "pal",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 76,
+      "infrastructure": 67,
+      "builder_reliability": 62,
+      "supply_pressure": 67,
+      "search_heat": 80,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Gujarat",
+      "city": "Vadodara",
+      "area": "Alkapuri",
+      "area_key": "alkapuri",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 67,
+      "infrastructure": 62,
+      "builder_reliability": 57,
+      "supply_pressure": 62,
+      "search_heat": 91,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Gujarat",
+      "city": "Vadodara",
+      "area": "Gotri",
+      "area_key": "gotri",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 67,
+      "infrastructure": 86,
+      "builder_reliability": 81,
+      "supply_pressure": 48,
+      "search_heat": 56,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Gujarat",
+      "city": "Vadodara",
+      "area": "Manjalpur",
+      "area_key": "manjalpur",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 55,
+      "infrastructure": 71,
+      "builder_reliability": 66,
+      "supply_pressure": 71,
+      "search_heat": 74,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Maharashtra",
+      "city": "Mumbai",
+      "area": "Bandra West",
+      "area_key": "bandra west",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 71,
+      "infrastructure": 71,
+      "builder_reliability": 66,
+      "supply_pressure": 71,
+      "search_heat": 45,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Maharashtra",
+      "city": "Mumbai",
+      "area": "Andheri West",
+      "area_key": "andheri west",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 86,
+      "infrastructure": 76,
+      "builder_reliability": 71,
+      "supply_pressure": 76,
+      "search_heat": 45,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Maharashtra",
+      "city": "Mumbai",
+      "area": "Powai",
+      "area_key": "powai",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 64,
+      "infrastructure": 60,
+      "builder_reliability": 55,
+      "supply_pressure": 60,
+      "search_heat": 83,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Maharashtra",
+      "city": "Pune",
+      "area": "Wakad",
+      "area_key": "wakad",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 89,
+      "infrastructure": 69,
+      "builder_reliability": 64,
+      "supply_pressure": 69,
+      "search_heat": 46,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "moderate",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Maharashtra",
+      "city": "Pune",
+      "area": "Hinjewadi",
+      "area_key": "hinjewadi",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 63,
+      "infrastructure": 76,
+      "builder_reliability": 71,
+      "supply_pressure": 76,
+      "search_heat": 75,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "moderate",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Maharashtra",
+      "city": "Pune",
+      "area": "Baner",
+      "area_key": "baner",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 78,
+      "infrastructure": 53,
+      "builder_reliability": 86,
+      "supply_pressure": 53,
+      "search_heat": 69,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "moderate",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Maharashtra",
+      "city": "Nagpur",
+      "area": "Civil Lines",
+      "area_key": "civil lines",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 82,
+      "infrastructure": 78,
+      "builder_reliability": 73,
+      "supply_pressure": 40,
+      "search_heat": 90,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Maharashtra",
+      "city": "Nagpur",
+      "area": "Dharampeth",
+      "area_key": "dharampeth",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 67,
+      "infrastructure": 76,
+      "builder_reliability": 71,
+      "supply_pressure": 76,
+      "search_heat": 73,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Maharashtra",
+      "city": "Nagpur",
+      "area": "Manish Nagar",
+      "area_key": "manish nagar",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 87,
+      "infrastructure": 73,
+      "builder_reliability": 68,
+      "supply_pressure": 73,
+      "search_heat": 68,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Madhya Pradesh",
+      "city": "Bhopal",
+      "area": "Arera Colony",
+      "area_key": "arera colony",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 72,
+      "infrastructure": 76,
+      "builder_reliability": 71,
+      "supply_pressure": 76,
+      "search_heat": 64,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Madhya Pradesh",
+      "city": "Bhopal",
+      "area": "MP Nagar",
+      "area_key": "mp nagar",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 85,
+      "infrastructure": 85,
+      "builder_reliability": 80,
+      "supply_pressure": 47,
+      "search_heat": 80,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Madhya Pradesh",
+      "city": "Bhopal",
+      "area": "Kolar Road",
+      "area_key": "kolar road",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 88,
+      "infrastructure": 66,
+      "builder_reliability": 61,
+      "supply_pressure": 66,
+      "search_heat": 71,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Madhya Pradesh",
+      "city": "Indore",
+      "area": "Vijay Nagar",
+      "area_key": "vijay nagar",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 80,
+      "infrastructure": 84,
+      "builder_reliability": 79,
+      "supply_pressure": 46,
+      "search_heat": 70,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Madhya Pradesh",
+      "city": "Indore",
+      "area": "Palasia",
+      "area_key": "palasia",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 67,
+      "infrastructure": 83,
+      "builder_reliability": 78,
+      "supply_pressure": 45,
+      "search_heat": 66,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Madhya Pradesh",
+      "city": "Indore",
+      "area": "Scheme 78",
+      "area_key": "scheme 78",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 60,
+      "infrastructure": 52,
+      "builder_reliability": 85,
+      "supply_pressure": 52,
+      "search_heat": 75,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Rajasthan",
+      "city": "Jaipur",
+      "area": "Vaishali Nagar",
+      "area_key": "vaishali nagar",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 88,
+      "infrastructure": 86,
+      "builder_reliability": 81,
+      "supply_pressure": 48,
+      "search_heat": 59,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Rajasthan",
+      "city": "Jaipur",
+      "area": "Malviya Nagar",
+      "area_key": "malviya nagar",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 69,
+      "infrastructure": 58,
+      "builder_reliability": 53,
+      "supply_pressure": 58,
+      "search_heat": 71,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Rajasthan",
+      "city": "Jaipur",
+      "area": "C Scheme",
+      "area_key": "c scheme",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 78,
+      "infrastructure": 58,
+      "builder_reliability": 53,
+      "supply_pressure": 58,
+      "search_heat": 47,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Rajasthan",
+      "city": "Udaipur",
+      "area": "Hiran Magri",
+      "area_key": "hiran magri",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 88,
+      "infrastructure": 77,
+      "builder_reliability": 72,
+      "supply_pressure": 77,
+      "search_heat": 53,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Rajasthan",
+      "city": "Udaipur",
+      "area": "Fatehpura",
+      "area_key": "fatehpura",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 72,
+      "infrastructure": 67,
+      "builder_reliability": 62,
+      "supply_pressure": 67,
+      "search_heat": 88,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Rajasthan",
+      "city": "Udaipur",
+      "area": "Bhopalpura",
+      "area_key": "bhopalpura",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 75,
+      "infrastructure": 77,
+      "builder_reliability": 72,
+      "supply_pressure": 77,
+      "search_heat": 51,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Rajasthan",
+      "city": "Jodhpur",
+      "area": "Sardarpura",
+      "area_key": "sardarpura",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 73,
+      "infrastructure": 62,
+      "builder_reliability": 57,
+      "supply_pressure": 62,
+      "search_heat": 91,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "contracting",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Rajasthan",
+      "city": "Jodhpur",
+      "area": "Ratanada",
+      "area_key": "ratanada",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 68,
+      "infrastructure": 57,
+      "builder_reliability": 52,
+      "supply_pressure": 57,
+      "search_heat": 74,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "contracting",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Rajasthan",
+      "city": "Jodhpur",
+      "area": "Paota",
+      "area_key": "paota",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 68,
+      "infrastructure": 58,
+      "builder_reliability": 53,
+      "supply_pressure": 58,
+      "search_heat": 91,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "contracting",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Uttar Pradesh",
+      "city": "Lucknow",
+      "area": "Gomti Nagar",
+      "area_key": "gomti nagar",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 72,
+      "infrastructure": 71,
+      "builder_reliability": 66,
+      "supply_pressure": 71,
+      "search_heat": 50,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Uttar Pradesh",
+      "city": "Lucknow",
+      "area": "Aliganj",
+      "area_key": "aliganj",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 82,
+      "infrastructure": 80,
+      "builder_reliability": 75,
+      "supply_pressure": 42,
+      "search_heat": 64,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Uttar Pradesh",
+      "city": "Lucknow",
+      "area": "Hazratganj",
+      "area_key": "hazratganj",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 62,
+      "infrastructure": 56,
+      "builder_reliability": 89,
+      "supply_pressure": 56,
+      "search_heat": 75,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Uttar Pradesh",
+      "city": "Noida",
+      "area": "Sector 62",
+      "area_key": "sector 62",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 61,
+      "infrastructure": 76,
+      "builder_reliability": 71,
+      "supply_pressure": 76,
+      "search_heat": 52,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Uttar Pradesh",
+      "city": "Noida",
+      "area": "Sector 137",
+      "area_key": "sector 137",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 68,
+      "infrastructure": 65,
+      "builder_reliability": 60,
+      "supply_pressure": 65,
+      "search_heat": 64,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Uttar Pradesh",
+      "city": "Noida",
+      "area": "Sector 150",
+      "area_key": "sector 150",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 73,
+      "infrastructure": 62,
+      "builder_reliability": 57,
+      "supply_pressure": 62,
+      "search_heat": 91,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Uttar Pradesh",
+      "city": "Ghaziabad",
+      "area": "Vaishali",
+      "area_key": "vaishali",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 67,
+      "infrastructure": 71,
+      "builder_reliability": 66,
+      "supply_pressure": 71,
+      "search_heat": 82,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Uttar Pradesh",
+      "city": "Ghaziabad",
+      "area": "Indirapuram",
+      "area_key": "indirapuram",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 65,
+      "infrastructure": 72,
+      "builder_reliability": 67,
+      "supply_pressure": 72,
+      "search_heat": 51,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Uttar Pradesh",
+      "city": "Ghaziabad",
+      "area": "Raj Nagar Extension",
+      "area_key": "raj nagar extension",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 71,
+      "infrastructure": 59,
+      "builder_reliability": 54,
+      "supply_pressure": 59,
+      "search_heat": 55,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Telangana",
+      "city": "Hyderabad",
+      "area": "Gachibowli",
+      "area_key": "gachibowli",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 67,
+      "infrastructure": 68,
+      "builder_reliability": 63,
+      "supply_pressure": 68,
+      "search_heat": 45,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "contracting",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Telangana",
+      "city": "Hyderabad",
+      "area": "Hitec City",
+      "area_key": "hitec city",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 57,
+      "infrastructure": 67,
+      "builder_reliability": 62,
+      "supply_pressure": 67,
+      "search_heat": 59,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "contracting",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Telangana",
+      "city": "Hyderabad",
+      "area": "Kondapur",
+      "area_key": "kondapur",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 68,
+      "infrastructure": 81,
+      "builder_reliability": 76,
+      "supply_pressure": 43,
+      "search_heat": 66,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "contracting",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Telangana",
+      "city": "Warangal",
+      "area": "Hanamkonda",
+      "area_key": "hanamkonda",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 58,
+      "infrastructure": 68,
+      "builder_reliability": 63,
+      "supply_pressure": 68,
+      "search_heat": 46,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Telangana",
+      "city": "Warangal",
+      "area": "Kazipet",
+      "area_key": "kazipet",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 63,
+      "infrastructure": 62,
+      "builder_reliability": 57,
+      "supply_pressure": 62,
+      "search_heat": 91,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Telangana",
+      "city": "Warangal",
+      "area": "Subedari",
+      "area_key": "subedari",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 57,
+      "infrastructure": 77,
+      "builder_reliability": 72,
+      "supply_pressure": 77,
+      "search_heat": 67,
+      "city_macro_inputs": {
+        "interest_rate_regime": "tight",
+        "credit_growth": "strong",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Goa",
+      "city": "Panaji",
+      "area": "Altinho",
+      "area_key": "altinho",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 55,
+      "infrastructure": 59,
+      "builder_reliability": 54,
+      "supply_pressure": 59,
+      "search_heat": 60,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "strong",
+        "employment_trend": "contracting",
+        "infra_cycle": "active",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Goa",
+      "city": "Panaji",
+      "area": "Miramar",
+      "area_key": "miramar",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 56,
+      "infrastructure": 61,
+      "builder_reliability": 56,
+      "supply_pressure": 61,
+      "search_heat": 64,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "strong",
+        "employment_trend": "contracting",
+        "infra_cycle": "active",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Goa",
+      "city": "Panaji",
+      "area": "Dona Paula",
+      "area_key": "dona paula",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 73,
+      "infrastructure": 83,
+      "builder_reliability": 78,
+      "supply_pressure": 45,
+      "search_heat": 46,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "strong",
+        "employment_trend": "contracting",
+        "infra_cycle": "active",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Goa",
+      "city": "Margao",
+      "area": "Fatorda",
+      "area_key": "fatorda",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 61,
+      "infrastructure": 73,
+      "builder_reliability": 68,
+      "supply_pressure": 73,
+      "search_heat": 81,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "stable",
+        "infra_cycle": "active",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Goa",
+      "city": "Margao",
+      "area": "Colva",
+      "area_key": "colva",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 66,
+      "infrastructure": 67,
+      "builder_reliability": 62,
+      "supply_pressure": 67,
+      "search_heat": 66,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "stable",
+        "infra_cycle": "active",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Goa",
+      "city": "Margao",
+      "area": "Benaulim",
+      "area_key": "benaulim",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 80,
+      "infrastructure": 59,
+      "builder_reliability": 54,
+      "supply_pressure": 59,
+      "search_heat": 69,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "stable",
+        "infra_cycle": "active",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Karnataka",
+      "city": "Bengaluru",
+      "area": "Whitefield",
+      "area_key": "whitefield",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 86,
+      "infrastructure": 81,
+      "builder_reliability": 76,
+      "supply_pressure": 43,
+      "search_heat": 62,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Karnataka",
+      "city": "Bengaluru",
+      "area": "Koramangala",
+      "area_key": "koramangala",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 76,
+      "infrastructure": 80,
+      "builder_reliability": 75,
+      "supply_pressure": 42,
+      "search_heat": 57,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Karnataka",
+      "city": "Bengaluru",
+      "area": "Sarjapur Road",
+      "area_key": "sarjapur road",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 71,
+      "infrastructure": 62,
+      "builder_reliability": 57,
+      "supply_pressure": 62,
+      "search_heat": 87,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "weak",
+        "employment_trend": "expanding",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Karnataka",
+      "city": "Mysuru",
+      "area": "Vijayanagar",
+      "area_key": "vijayanagar",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 83,
+      "infrastructure": 53,
+      "builder_reliability": 86,
+      "supply_pressure": 53,
+      "search_heat": 76,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "weak",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Karnataka",
+      "city": "Mysuru",
+      "area": "Jayalakshmipuram",
+      "area_key": "jayalakshmipuram",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 64,
+      "infrastructure": 73,
+      "builder_reliability": 68,
+      "supply_pressure": 73,
+      "search_heat": 79,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "weak",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Karnataka",
+      "city": "Mysuru",
+      "area": "Hebbal",
+      "area_key": "hebbal",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 59,
+      "infrastructure": 86,
+      "builder_reliability": 81,
+      "supply_pressure": 48,
+      "search_heat": 83,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "weak",
+        "employment_trend": "stable",
+        "infra_cycle": "inactive",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Karnataka",
+      "city": "Mangaluru",
+      "area": "Kadri",
+      "area_key": "kadri",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 58,
+      "infrastructure": 76,
+      "builder_reliability": 71,
+      "supply_pressure": 76,
+      "search_heat": 73,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Karnataka",
+      "city": "Mangaluru",
+      "area": "Bendoor",
+      "area_key": "bendoor",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 78,
+      "infrastructure": 60,
+      "builder_reliability": 55,
+      "supply_pressure": 60,
+      "search_heat": 70,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Karnataka",
+      "city": "Mangaluru",
+      "area": "Derebail",
+      "area_key": "derebail",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 75,
+      "infrastructure": 55,
+      "builder_reliability": 88,
+      "supply_pressure": 55,
+      "search_heat": 58,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "strong",
+        "employment_trend": "expanding",
+        "infra_cycle": "active",
+        "construction_cycle": "late"
+      }
+    },
+    {
+      "state": "Daman and Diu",
+      "city": "Daman",
+      "area": "Moti Daman",
+      "area_key": "moti daman",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 56,
+      "infrastructure": 66,
+      "builder_reliability": 61,
+      "supply_pressure": 66,
+      "search_heat": 72,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Daman and Diu",
+      "city": "Daman",
+      "area": "Nani Daman",
+      "area_key": "nani daman",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 74,
+      "infrastructure": 63,
+      "builder_reliability": 58,
+      "supply_pressure": 63,
+      "search_heat": 69,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Daman and Diu",
+      "city": "Daman",
+      "area": "Marwad",
+      "area_key": "marwad",
+      "tier": "paid",
+      "unlocked": false,
+      "connectivity": 69,
+      "infrastructure": 80,
+      "builder_reliability": 75,
+      "supply_pressure": 42,
+      "search_heat": 73,
+      "city_macro_inputs": {
+        "interest_rate_regime": "loose",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "mid"
+      }
+    },
+    {
+      "state": "Daman and Diu",
+      "city": "Diu",
+      "area": "Fudam",
+      "area_key": "fudam",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 78,
+      "infrastructure": 80,
+      "builder_reliability": 75,
+      "supply_pressure": 42,
+      "search_heat": 91,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Daman and Diu",
+      "city": "Diu",
+      "area": "Bucharvada",
+      "area_key": "bucharvada",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 58,
+      "infrastructure": 86,
+      "builder_reliability": 81,
+      "supply_pressure": 48,
+      "search_heat": 45,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    },
+    {
+      "state": "Daman and Diu",
+      "city": "Diu",
+      "area": "Vanakbara",
+      "area_key": "vanakbara",
+      "tier": "free",
+      "unlocked": true,
+      "connectivity": 71,
+      "infrastructure": 82,
+      "builder_reliability": 77,
+      "supply_pressure": 44,
+      "search_heat": 75,
+      "city_macro_inputs": {
+        "interest_rate_regime": "neutral",
+        "credit_growth": "moderate",
+        "employment_trend": "contracting",
+        "infra_cycle": "inactive",
+        "construction_cycle": "early"
+      }
+    }
+  ]
+}
