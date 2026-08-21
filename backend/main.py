@@ -27,6 +27,7 @@ from core.geo_data import build_area_data, build_area_access
 from services.area_adjustment_service import compute_area_adjustment
 from services.analyst_adjustment_service import compute_analyst_adjustment
 from services.allocation_map_service import map_bucket
+from services.ml_methodology import compute_area_model, get_model_methodology
 from services.wakad_external_service import (
     fetch_wakad_heatmap,
     fetch_wakad_snapshot,
@@ -144,6 +145,11 @@ def ping():
 def root():
     return {"status": "Real Estate Signal Stack running"}
 
+
+@app.get("/model/methodology")
+def model_methodology():
+    return get_model_methodology()
+
 # ---------------- CITY MACRO ----------------
 
 @app.get("/cities/{city_id}/macro")
@@ -205,6 +211,12 @@ def get_area_snapshot(
     total_risk = risk.get("total_deduction", 0.0)
 
     final_score = max(base_score * final_adjustment_factor - total_risk, 0.0)
+    ml_model = compute_area_model(
+        area,
+        adjustment_factor=final_adjustment_factor,
+        analyst_delta=analyst_delta,
+        risk_deduction=total_risk,
+    )
 
     confidence = compute_confidence(
         analyst_delta,
@@ -224,6 +236,11 @@ def get_area_snapshot(
         "score_composition": {
             "city_macro_score": macro_score,
             "base_area_score": base_score,
+            "ml_adjusted_area_score": ml_model.score,
+            "risk_probability_pct": ml_model.risk_probability_pct,
+            "ml_confidence_score": ml_model.confidence_score,
+            "normalized_features": ml_model.normalized_features,
+            "model_formula": ml_model.formula,
             "area_adjustment_factor": area_factor,
             "analyst_adjustment_delta": analyst_delta,
             "final_adjustment_factor": final_adjustment_factor,

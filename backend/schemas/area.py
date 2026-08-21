@@ -15,6 +15,11 @@ class AllocationSignal(BaseModel):
 class ScoreComposition(BaseModel):
     city_macro_score: float
     base_area_score: float
+    ml_adjusted_area_score: float | None = None
+    risk_probability_pct: float | None = None
+    ml_confidence_score: float | None = None
+    normalized_features: Dict[str, float] | None = None
+    model_formula: Dict | None = None
     area_adjustment_factor: float
     analyst_adjustment_delta: float
     final_adjustment_factor: float

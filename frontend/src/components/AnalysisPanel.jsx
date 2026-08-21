@@ -224,6 +224,12 @@ export default function AnalysisPanel({ selection }) {
         );
       })
     : [];
+  const modelComposition = areaData?.score_composition || {};
+  const modelFormula = modelComposition.model_formula || {};
+  const normalizedFeatures = modelComposition.normalized_features || {};
+  const featureWeights = modelFormula.feature_weights || {};
+  const normalizedFeatureRows = Object.entries(normalizedFeatures);
+  const featureWeightRows = Object.entries(featureWeights);
 
   const firstPoint = timeSeries.length ? timeSeries[0] : null;
   const scoreDelta =
@@ -503,11 +509,48 @@ export default function AnalysisPanel({ selection }) {
             <div className="report-section">
               <h3>Evidence Framework</h3>
               <ul>
-                <li>Composite model blends macro cycles, local fundamentals, and transaction velocity.</li>
-                <li>Confidence score accounts for analyst overrides, data age, and volatility bands.</li>
-                <li>Heatmap scores cross-validate area performance against city-wide distribution.</li>
+                <li>Model family: {modelFormula.model_family || "transparent hybrid ML scoring"}.</li>
+                <li>Score formula: {modelFormula.score_formula || "weighted composite of normalized market indicators"}.</li>
+                <li>Risk formula: {modelFormula.risk_formula || "logistic probability over supply and execution indicators"}.</li>
+                <li>Confidence score accounts for analyst overrides, model risk, and data quality bands.</li>
                 <li>Manual intel entries are time-stamped and tied to the selected corridor.</li>
               </ul>
+              <div className="report-range-grid">
+                <div>
+                  <span>ML Adjusted Score</span>
+                  <strong>{formatValue(modelComposition.ml_adjusted_area_score, 1)}</strong>
+                </div>
+                <div>
+                  <span>Risk Probability</span>
+                  <strong>{formatValue(modelComposition.risk_probability_pct, 1)}%</strong>
+                </div>
+                <div>
+                  <span>ML Confidence</span>
+                  <strong>{formatValue(modelComposition.ml_confidence_score, 1)}%</strong>
+                </div>
+              </div>
+              {normalizedFeatureRows.length > 0 && (
+                <div className="report-feature-table">
+                  <h4>Normalized Model Inputs</h4>
+                  {normalizedFeatureRows.map(([key, value]) => (
+                    <div key={key}>
+                      <span>{key.replaceAll("_", " ")}</span>
+                      <strong>{formatValue(value, 1)}</strong>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {featureWeightRows.length > 0 && (
+                <div className="report-feature-table">
+                  <h4>Feature Weights</h4>
+                  {featureWeightRows.map(([key, value]) => (
+                    <div key={key}>
+                      <span>{key.replaceAll("_", " ")}</span>
+                      <strong>{formatValue(value, 2)}</strong>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="report-section">
