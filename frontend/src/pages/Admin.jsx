@@ -42,6 +42,12 @@ import {
   getLiveDataConfig,
   saveLiveDataConfig,
 } from "../services/liveDataConfig";
+import {
+  clearOpenRouterConfig,
+  fetchOpenRouterKeyStatus,
+  getOpenRouterConfig,
+  saveOpenRouterConfig,
+} from "../services/openRouterConfig";
 
 const ROLE_LABELS = {
   ceo: "CEO",
@@ -418,6 +424,8 @@ export default function Admin() {
   const [dealSurvivalForm, setDealSurvivalForm] = useState(makeDealForm());
   const [liveApiForm, setLiveApiForm] = useState(() => getLiveDataConfig());
   const [liveApiMessage, setLiveApiMessage] = useState("");
+  const [openRouterForm, setOpenRouterForm] = useState(() => getOpenRouterConfig());
+  const [openRouterMessage, setOpenRouterMessage] = useState("");
 
   const canManageAll = role === "ceo";
   const canManageData = role === "data_analyst" || role === "ceo";
@@ -452,6 +460,42 @@ export default function Admin() {
     const cleared = clearLiveDataConfig();
     setLiveApiForm(cleared);
     setLiveApiMessage("Live data API key removed from this browser.");
+  }
+
+  function handleOpenRouterSubmit(e) {
+    e.preventDefault();
+    const saved = saveOpenRouterConfig({
+      ...openRouterForm,
+      usageLimitUsd: 0.008,
+    });
+    setOpenRouterForm(saved);
+    setOpenRouterMessage(
+      saved.enabled
+        ? "OpenRouter key saved with a local $0.008 usage cap."
+        : "OpenRouter key saved but disabled."
+    );
+  }
+
+  function handleClearOpenRouter() {
+    const cleared = clearOpenRouterConfig();
+    setOpenRouterForm(cleared);
+    setOpenRouterMessage("OpenRouter key removed from this browser.");
+  }
+
+  async function handleOpenRouterStatus() {
+    if (!accessToken) return;
+    try {
+      const status = await fetchOpenRouterKeyStatus(accessToken);
+      const remaining =
+        status.limit_remaining === null || status.limit_remaining === undefined
+          ? "not set"
+          : `$${Number(status.limit_remaining).toFixed(4)}`;
+      setOpenRouterMessage(
+        `Key reachable. OpenRouter remaining limit: ${remaining}. Local project cap: $0.0080.`
+      );
+    } catch (err) {
+      setOpenRouterMessage(err.message || "Could not verify OpenRouter key.");
+    }
   }
 
   async function handleLoginSubmit(e) {
@@ -1228,6 +1272,80 @@ export default function Admin() {
                     </button>
                   </div>
                   {liveApiMessage && <span className="admin-field-help">{liveApiMessage}</span>}
+                </form>
+              )}
+
+              {(canManageData || canManageAll) && (
+                <form className="card admin-form" onSubmit={handleOpenRouterSubmit}>
+                  <h3>OpenRouter AI Key</h3>
+                  <p>
+                    Use this for future AI-assisted analysis. Create the API key in OpenRouter and
+                    set the official key limit to 0.008 USD. This project also enforces a local
+                    $0.008 cap before making OpenRouter calls.
+                  </p>
+                  <label className="admin-field">
+                    <span className="admin-field-label">API Key</span>
+                    <input
+                      type="password"
+                      placeholder="sk-or-v1-..."
+                      value={openRouterForm.apiKey}
+                      onChange={(e) =>
+                        setOpenRouterForm({ ...openRouterForm, apiKey: e.target.value })
+                      }
+                    />
+                    <span className="admin-field-help">
+                      For the official cap, create or edit the key in OpenRouter and set limit =
+                      0.008. OpenRouter returns the plain key only once.
+                    </span>
+                  </label>
+                  <label className="admin-field">
+                    <span className="admin-field-label">Model</span>
+                    <select
+                      value={openRouterForm.model}
+                      onChange={(e) =>
+                        setOpenRouterForm({ ...openRouterForm, model: e.target.value })
+                      }
+                    >
+                      <option value="openrouter/auto">OpenRouter Auto</option>
+                      <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash</option>
+                      <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
+                      <option value="anthropic/claude-3.5-haiku">Claude 3.5 Haiku</option>
+                    </select>
+                  </label>
+                  <label className="admin-field">
+                    <span className="admin-field-label">Local Usage Cap</span>
+                    <input type="number" value="0.008" readOnly />
+                    <span className="admin-field-help">
+                      Hard-coded project cap requested: $0.008.
+                    </span>
+                  </label>
+                  <label className="admin-role-option">
+                    <input
+                      type="checkbox"
+                      checked={openRouterForm.enabled}
+                      onChange={(e) =>
+                        setOpenRouterForm({
+                          ...openRouterForm,
+                          enabled: e.target.checked,
+                        })
+                      }
+                    />
+                    Enable OpenRouter for this browser
+                  </label>
+                  <div className="admin-status-buttons">
+                    <button className="btn primary" type="submit">
+                      Save OpenRouter Key
+                    </button>
+                    <button className="btn ghost" type="button" onClick={handleOpenRouterStatus}>
+                      Check Key
+                    </button>
+                    <button className="btn ghost" type="button" onClick={handleClearOpenRouter}>
+                      Clear Key
+                    </button>
+                  </div>
+                  {openRouterMessage && (
+                    <span className="admin-field-help">{openRouterMessage}</span>
+                  )}
                 </form>
               )}
 

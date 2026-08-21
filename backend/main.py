@@ -15,6 +15,7 @@ from routes.staff import router as staff_router
 from routes.intel import router as intel_router
 from routes.enterprise import router as enterprise_router
 from routes.investor_dashboard import router as investor_dashboard_router
+from routes.openrouter import router as openrouter_router
 from routes.public import router as public_router
 from services.analyst_admin import router as analyst_router
 from services.analyst_admin import ANALYST_ADJUSTMENTS
@@ -60,6 +61,7 @@ app.include_router(staff_router)
 app.include_router(intel_router)
 app.include_router(investor_dashboard_router)
 app.include_router(enterprise_router)
+app.include_router(openrouter_router)
 app.include_router(public_router)
 
 # =========================================================
