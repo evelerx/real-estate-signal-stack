@@ -8,6 +8,7 @@ if str(BACKEND_DIR) not in sys.path:
 
 from services.ml_methodology import (  # noqa: E402
     AREA_SCORE_WEIGHTS,
+    audit_model_contract,
     compute_area_model,
     get_model_methodology,
     logistic_probability,
@@ -55,3 +56,22 @@ def test_methodology_contract():
     assert methodology["title"] == "Real Estate Signal Stack Model Methodology"
     assert methodology["modules"][0]["target"] == "capital_allocation_score"
     assert "recommended_ml_upgrade" in methodology
+
+
+def test_model_audit_contract():
+    audit = audit_model_contract(
+        [
+            {
+                "id": "wakad",
+                "connectivity": 89,
+                "infrastructure": 69,
+                "builder_reliability": 64,
+                "supply_pressure": 69,
+                "search_heat": 46,
+            }
+        ]
+    )
+    assert audit["status"] == "pass"
+    assert audit["rows_checked"] == 1
+    assert audit["score_range"]["min"] is not None
+    assert audit["formula_endpoint"] == "/api/model/methodology"

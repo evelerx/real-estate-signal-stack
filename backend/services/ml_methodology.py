@@ -165,6 +165,48 @@ def get_model_methodology() -> dict:
     }
 
 
+def audit_model_contract(sample_rows: Iterable[dict]) -> dict:
+    rows = list(sample_rows)
+    scored = score_dataset(rows)
+    required_features = set(AREA_FEATURE_RANGES)
+    missing_by_row = []
+
+    for row in rows:
+        missing = sorted(required_features - set(row))
+        if missing:
+            missing_by_row.append(
+                {
+                    "id": row.get("id") or row.get("area") or row.get("name") or "unknown",
+                    "missing_features": missing,
+                }
+            )
+
+    score_values = [row["ml_score"] for row in scored]
+    risk_values = [row["risk_probability_pct"] for row in scored]
+    confidence_values = [row["confidence_score"] for row in scored]
+
+    return {
+        "status": "pass" if not missing_by_row else "warning",
+        "rows_checked": len(rows),
+        "required_features": sorted(required_features),
+        "missing_features": missing_by_row,
+        "score_range": {
+            "min": min(score_values) if score_values else None,
+            "max": max(score_values) if score_values else None,
+        },
+        "risk_probability_range_pct": {
+            "min": min(risk_values) if risk_values else None,
+            "max": max(risk_values) if risk_values else None,
+        },
+        "confidence_range": {
+            "min": min(confidence_values) if confidence_values else None,
+            "max": max(confidence_values) if confidence_values else None,
+        },
+        "formula_endpoint": "/api/model/methodology",
+        "area_snapshot_field": "score_composition.model_formula",
+    }
+
+
 def score_dataset(rows: Iterable[dict]) -> list[dict]:
     output = []
     for row in rows:

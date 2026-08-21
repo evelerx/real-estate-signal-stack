@@ -42,6 +42,14 @@ The backend exposes these weights at:
 /api/model/methodology
 ```
 
+The backend also exposes a model contract audit at:
+
+```text
+/api/model/audit
+```
+
+This audit checks whether the active area dataset contains the required model features and whether computed score, risk, and confidence outputs stay inside valid ranges.
+
 Each area snapshot also includes the active model metadata in:
 
 ```text
