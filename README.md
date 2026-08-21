@@ -109,6 +109,13 @@ The referenced synopsis/base paper is not currently present in this repository. 
 backend/config/model_config.json
 ```
 
+Base-paper extraction guide:
+
+```text
+docs/base-paper-extraction-template.md
+backend/config/base_paper_mapping.template.json
+```
+
 When the paper is added, update:
 
 ```text

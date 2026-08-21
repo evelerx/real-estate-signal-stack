@@ -1,0 +1,61 @@
+{
+  "paper_identity": {
+    "paper_title": "",
+    "authors": [],
+    "publication_year": null,
+    "publication_or_conference": "",
+    "doi_or_url": "",
+    "pages_used_for_model": []
+  },
+  "research_target": {
+    "target_variable": "",
+    "target_type": "regression | classification | ranking | clustering",
+    "business_meaning": ""
+  },
+  "variable_mapping": [
+    {
+      "paper_variable": "",
+      "paper_definition": "",
+      "project_variable": "connectivity",
+      "transform_needed": ""
+    },
+    {
+      "paper_variable": "",
+      "paper_definition": "",
+      "project_variable": "infrastructure",
+      "transform_needed": ""
+    },
+    {
+      "paper_variable": "",
+      "paper_definition": "",
+      "project_variable": "builder_reliability",
+      "transform_needed": ""
+    },
+    {
+      "paper_variable": "",
+      "paper_definition": "",
+      "project_variable": "supply_pressure",
+      "transform_needed": ""
+    },
+    {
+      "paper_variable": "",
+      "paper_definition": "",
+      "project_variable": "search_heat",
+      "transform_needed": ""
+    }
+  ],
+  "model_details": {
+    "model_family": "",
+    "algorithm": "",
+    "normalization": "",
+    "training_split": "",
+    "evaluation_metrics": {}
+  },
+  "config_updates": {
+    "feature_ranges": {},
+    "feature_weights": {},
+    "risk_logit_weights": {},
+    "confidence_formula": {}
+  },
+  "notes": ""
+}

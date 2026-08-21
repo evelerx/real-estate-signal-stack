@@ -99,6 +99,10 @@ DEFAULT_MODEL_CONFIG = {
 
 CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "model_config.json"
 CONFIG_DISPLAY_PATH = "backend/config/model_config.json"
+BASE_PAPER_TEMPLATE_PATHS = [
+    "docs/base-paper-extraction-template.md",
+    "backend/config/base_paper_mapping.template.json",
+]
 
 
 def load_model_config() -> dict:
@@ -227,6 +231,11 @@ def get_model_methodology() -> dict:
         ],
         "expected_training_columns": MODEL_CONFIG["expected_training_columns"],
         "recommended_ml_upgrade": MODEL_CONFIG["recommended_ml_upgrade"],
+        "base_paper_handoff": {
+            "status": MODEL_CONFIG["source_status"],
+            "template_paths": BASE_PAPER_TEMPLATE_PATHS,
+            "config_to_update": CONFIG_DISPLAY_PATH,
+        },
     }
 
 
@@ -234,6 +243,10 @@ def get_project_traceability() -> dict:
     return {
         "title": "Synopsis To Implementation Traceability",
         "base_paper_status": MODEL_CONFIG["source_status"],
+        "base_paper_handoff": {
+            "template_paths": BASE_PAPER_TEMPLATE_PATHS,
+            "config_to_update": CONFIG_DISPLAY_PATH,
+        },
         "items": [
             {
                 "synopsis_requirement": "Explain the real-life real-estate decision problem",
@@ -317,6 +330,7 @@ def audit_model_contract(sample_rows: Iterable[dict]) -> dict:
         "model_version": MODEL_CONFIG["model_version"],
         "source_status": MODEL_CONFIG["source_status"],
         "config_path": CONFIG_DISPLAY_PATH,
+        "base_paper_template_paths": BASE_PAPER_TEMPLATE_PATHS,
     }
 
 

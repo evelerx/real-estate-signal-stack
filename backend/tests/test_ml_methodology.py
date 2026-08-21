@@ -59,6 +59,7 @@ def test_methodology_contract():
     assert methodology["title"] == "Real Estate Signal Stack Model Methodology"
     assert methodology["modules"][0]["target"] == "capital_allocation_score"
     assert "recommended_ml_upgrade" in methodology
+    assert methodology["base_paper_handoff"]["config_to_update"] == "backend/config/model_config.json"
     assert get_area_model_formula()["config_path"] == "backend/config/model_config.json"
 
 
@@ -87,12 +88,14 @@ def test_model_audit_contract():
     assert audit["score_range"]["min"] is not None
     assert audit["formula_endpoint"] == "/api/model/methodology"
     assert audit["config_path"] == "backend/config/model_config.json"
+    assert "docs/base-paper-extraction-template.md" in audit["base_paper_template_paths"]
 
 
 def test_project_traceability_contract():
     traceability = get_project_traceability()
     assert traceability["title"] == "Synopsis To Implementation Traceability"
     assert len(traceability["items"]) >= 5
+    assert traceability["base_paper_handoff"]["config_to_update"] == "backend/config/model_config.json"
     statuses = {item["status"] for item in traceability["items"]}
     assert "implemented" in statuses
     assert "blocked_until_base_paper_uploaded" in statuses

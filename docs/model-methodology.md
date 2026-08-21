@@ -137,6 +137,13 @@ Once the base paper is added to the repo, update:
 backend/config/model_config.json
 ```
 
+Use this extraction guide first:
+
+```text
+docs/base-paper-extraction-template.md
+backend/config/base_paper_mapping.template.json
+```
+
 Replace:
 
 ```text
