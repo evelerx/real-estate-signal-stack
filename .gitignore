@@ -26,3 +26,5 @@ frontend/src/cd
 .vscode/
 .DS_Store
 Thumbs.db
+
+.vercel
