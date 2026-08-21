@@ -3,13 +3,14 @@ import {
   fetchAreaSnapshot,
   fetchAreaTimeSeries,
   fetchCityMacro,
-  fetchAreaHeatmap,
 } from "../services/api";
 import { getIntelByArea } from "../services/localIntel";
 import HeatMap from "./HeatMap";
 import TimeSeriesChart from "./TimeSeriesChart";
 import * as htmlToImage from "html-to-image";
 import jsPDF from "jspdf";
+
+const LIVE_REFRESH_MS = 30_000;
 
 function formatDate(date = new Date()) {
   return date.toLocaleDateString();
@@ -74,12 +75,8 @@ export default function AnalysisPanel({ selection }) {
         setError(null);
 
         if (area) {
-          const [areaRes, seriesRes] = await Promise.all([
-            fetchAreaSnapshot(area),
-            fetchAreaTimeSeries(area),
-          ]);
+          const areaRes = await fetchAreaSnapshot(area);
           setAreaData(areaRes);
-          setTimeSeries(Array.isArray(seriesRes) ? seriesRes : []);
         } else {
           setAreaData(null);
           setTimeSeries([]);
@@ -92,12 +89,7 @@ export default function AnalysisPanel({ selection }) {
           setCityMacro(null);
         }
 
-        if (city || state) {
-          const heatRes = await fetchAreaHeatmap({ city, state, area });
-          setHeatmapData(Array.isArray(heatRes) ? heatRes : []);
-        } else {
-          setHeatmapData(null);
-        }
+        setHeatmapData(null);
       } catch (err) {
         console.error(err);
         setError(err.message || "Failed to load analysis");
@@ -108,6 +100,36 @@ export default function AnalysisPanel({ selection }) {
 
     loadData();
   }, [area, city, state]);
+
+  useEffect(() => {
+    if (view !== "chart" || !area) return undefined;
+
+    let cancelled = false;
+    let intervalId = null;
+
+    async function loadLiveSeries() {
+      try {
+        setError(null);
+        const seriesRes = await fetchAreaTimeSeries(area, { forceLive: true });
+        if (!cancelled) {
+          setTimeSeries(Array.isArray(seriesRes) ? seriesRes : []);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error(err);
+          setError(err.message || "Failed to refresh live chart data");
+        }
+      }
+    }
+
+    loadLiveSeries();
+    intervalId = window.setInterval(loadLiveSeries, LIVE_REFRESH_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [area, view]);
 
   useEffect(() => {
     if (!area) {
@@ -240,6 +262,11 @@ export default function AnalysisPanel({ selection }) {
         <button onClick={() => setView("heatmap")}>HeatMap</button>
       </div>
       {exporting && <div className="report-status">Preparing report...</div>}
+      {view === "chart" && area && (
+        <div className="report-status">
+          Live chart refresh active. Fetching every 30 seconds while this view is open.
+        </div>
+      )}
 
       {/* CARDS VIEW */}
       {view === "cards" && areaData && (

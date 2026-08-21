@@ -8,8 +8,8 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 
-def _api_key() -> str:
-    return os.getenv("WAKAD_DATA_API_KEY", "").strip()
+def _api_key(api_key: str | None = None) -> str:
+    return (api_key or os.getenv("WAKAD_DATA_API_KEY", "")).strip()
 
 
 def _api_key_header() -> str:
@@ -24,15 +24,19 @@ def _timeout_seconds() -> float:
         return 8.0
 
 
-def _ensure_configured(url: str) -> None:
+def _ensure_configured(url: str, api_key: str | None = None) -> None:
     if not url or not url.strip():
         raise ValueError("Wakad API URL is not configured")
-    if not _api_key():
+    if not _api_key(api_key):
         raise ValueError("WAKAD_DATA_API_KEY is not configured")
 
 
-def _fetch_json(url: str, params: Dict[str, str] | None = None) -> Dict | List:
-    _ensure_configured(url)
+def _fetch_json(
+    url: str,
+    params: Dict[str, str] | None = None,
+    api_key: str | None = None,
+) -> Dict | List:
+    _ensure_configured(url, api_key)
     final_url = url
     if params:
         query = urlencode({k: v for k, v in params.items() if v is not None})
@@ -41,7 +45,7 @@ def _fetch_json(url: str, params: Dict[str, str] | None = None) -> Dict | List:
 
     headers = {
         "Accept": "application/json",
-        _api_key_header(): _api_key(),
+        _api_key_header(): _api_key(api_key),
     }
     req = Request(final_url, headers=headers, method="GET")
 
@@ -58,17 +62,17 @@ def _fetch_json(url: str, params: Dict[str, str] | None = None) -> Dict | List:
         raise RuntimeError("Wakad provider returned invalid JSON") from exc
 
 
-def fetch_wakad_snapshot() -> Dict:
+def fetch_wakad_snapshot(api_key: str | None = None) -> Dict:
     url = os.getenv("WAKAD_SNAPSHOT_API_URL", "").strip()
-    payload = _fetch_json(url)
+    payload = _fetch_json(url, api_key=api_key)
     if not isinstance(payload, dict):
         raise RuntimeError("Wakad snapshot payload must be an object")
     return payload
 
 
-def fetch_wakad_timeseries() -> List[Dict]:
+def fetch_wakad_timeseries(api_key: str | None = None) -> List[Dict]:
     url = os.getenv("WAKAD_TIMESERIES_API_URL", "").strip()
-    payload = _fetch_json(url)
+    payload = _fetch_json(url, api_key=api_key)
 
     series = payload.get("series") if isinstance(payload, dict) else payload
     if not isinstance(series, list):
@@ -95,9 +99,9 @@ def fetch_wakad_timeseries() -> List[Dict]:
     return normalized
 
 
-def fetch_wakad_heatmap() -> List[Dict]:
+def fetch_wakad_heatmap(api_key: str | None = None) -> List[Dict]:
     url = os.getenv("WAKAD_HEATMAP_API_URL", "").strip()
-    payload = _fetch_json(url)
+    payload = _fetch_json(url, api_key=api_key)
 
     rows = payload.get("rows") if isinstance(payload, dict) else payload
     if not isinstance(rows, list):

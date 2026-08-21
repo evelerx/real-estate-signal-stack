@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 
@@ -154,6 +154,7 @@ def get_city_macro(city_id: str):
 def get_area_snapshot(
     area_id: str,
     version: Optional[str] = Query(None),
+    live_data_api_key: Optional[str] = Header(None, alias="X-Live-Data-Api-Key"),
 ):
     if not VALID_SNAPSHOTS:
         raise HTTPException(status_code=500, detail="No snapshots configured")
@@ -231,7 +232,7 @@ def get_area_snapshot(
 
     if is_wakad(area_key):
         try:
-            external = fetch_wakad_snapshot()
+            external = fetch_wakad_snapshot(api_key=live_data_api_key)
             if "capital_allocation_score" in external:
                 response["capital_allocation_score"] = round(
                     float(external["capital_allocation_score"]), 2
@@ -263,11 +264,14 @@ def get_area_snapshot(
 # ---------------- TIME SERIES ----------------
 
 @app.get("/areas/timeseries")
-def get_area_timeseries(area: str = Query(...)):
+def get_area_timeseries(
+    area: str = Query(...),
+    live_data_api_key: Optional[str] = Header(None, alias="X-Live-Data-Api-Key"),
+):
     area_key = area.strip().lower()
     if is_wakad(area_key):
         try:
-            return fetch_wakad_timeseries()
+            return fetch_wakad_timeseries(api_key=live_data_api_key)
         except (ValueError, RuntimeError):
             # Fall back to local computed data when external Wakad feed is unavailable.
             pass
@@ -316,8 +320,11 @@ def get_area_timeseries(area: str = Query(...)):
 
 
 @app.get("/timeseries/areas")
-def get_area_timeseries_alias(area: str = Query(...)):
-    return get_area_timeseries(area=area)
+def get_area_timeseries_alias(
+    area: str = Query(...),
+    live_data_api_key: Optional[str] = Header(None, alias="X-Live-Data-Api-Key"),
+):
+    return get_area_timeseries(area=area, live_data_api_key=live_data_api_key)
 
 # ---------------- HEATMAP ----------------
 
@@ -326,10 +333,11 @@ def get_area_heatmap(
     city: Optional[str] = None,
     state: Optional[str] = None,
     area: Optional[str] = None,
+    live_data_api_key: Optional[str] = Header(None, alias="X-Live-Data-Api-Key"),
 ):
     if is_wakad(area):
         try:
-            return fetch_wakad_heatmap()
+            return fetch_wakad_heatmap(api_key=live_data_api_key)
         except (ValueError, RuntimeError):
             # Fall back to local computed data when external Wakad feed is unavailable.
             pass

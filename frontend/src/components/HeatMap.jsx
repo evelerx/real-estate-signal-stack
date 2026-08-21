@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { fetchAreaHeatmap } from "../services/api";
 
+const LIVE_REFRESH_MS = 30_000;
+
 function scoreToColor(score, min, max) {
   const t = (score - min) / (max - min || 1);
   const hue = 120 * t; // 0 = red, 120 = green
@@ -17,7 +19,7 @@ function HeatmapLegend() {
   );
 }
 
-export default function HeatMap({ scope = {}, data: dataOverride = null }) {
+export default function HeatMap({ scope = {}, data: dataOverride = null, liveRefresh = true }) {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -28,25 +30,36 @@ export default function HeatMap({ scope = {}, data: dataOverride = null }) {
       return;
     }
 
+    let cancelled = false;
+    let intervalId = null;
+
     async function loadHeatmap() {
       try {
         setLoading(true);
         setError(null);
 
-        const res = await fetchAreaHeatmap(scope);
+        const res = await fetchAreaHeatmap(scope, { forceLive: true });
 
         // HARD GUARANTEE ARRAY
-        setData(Array.isArray(res) ? res : []);
+        if (!cancelled) setData(Array.isArray(res) ? res : []);
       } catch (err) {
         console.error(err);
-        setError("Failed to load heatmap data");
+        if (!cancelled) setError("Failed to load heatmap data");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     loadHeatmap();
-  }, [scope?.city, scope?.state, dataOverride]);
+    if (liveRefresh) {
+      intervalId = window.setInterval(loadHeatmap, LIVE_REFRESH_MS);
+    }
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [scope?.city, scope?.state, scope?.area, dataOverride, liveRefresh]);
 
   if (loading) return <div className="heatmap-box">Loading heatmap...</div>;
   if (error) return <div className="heatmap-box error">{error}</div>;
@@ -60,6 +73,11 @@ export default function HeatMap({ scope = {}, data: dataOverride = null }) {
   return (
     <div className="heatmap-box">
       <h3>Area Heat Map</h3>
+      {liveRefresh && !dataOverride && (
+        <p className="report-status">
+          Live heatmap refresh active. Fetching every 30 seconds while this view is open.
+        </p>
+      )}
       <HeatmapLegend />
 
       <div className="heatmap-grid">

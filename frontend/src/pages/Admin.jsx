@@ -37,6 +37,11 @@ import {
   fetchDealSurvivalLayer,
   upsertDealSurvivalManual,
 } from "../services/dealSurvivalApi";
+import {
+  clearLiveDataConfig,
+  getLiveDataConfig,
+  saveLiveDataConfig,
+} from "../services/liveDataConfig";
 
 const ROLE_LABELS = {
   ceo: "CEO",
@@ -411,6 +416,8 @@ export default function Admin() {
   const [dealSurvivalRows, setDealSurvivalRows] = useState([]);
   const [dealSurvivalError, setDealSurvivalError] = useState("");
   const [dealSurvivalForm, setDealSurvivalForm] = useState(makeDealForm());
+  const [liveApiForm, setLiveApiForm] = useState(() => getLiveDataConfig());
+  const [liveApiMessage, setLiveApiMessage] = useState("");
 
   const canManageAll = role === "ceo";
   const canManageData = role === "data_analyst" || role === "ceo";
@@ -428,6 +435,23 @@ export default function Admin() {
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  }
+
+  function handleLiveApiSubmit(e) {
+    e.preventDefault();
+    const saved = saveLiveDataConfig(liveApiForm);
+    setLiveApiForm(saved);
+    setLiveApiMessage(
+      saved.enabled
+        ? "Live data API key saved. Graphs will refresh every 30 seconds only while open."
+        : "API key saved but live mode is disabled."
+    );
+  }
+
+  function handleClearLiveApi() {
+    const cleared = clearLiveDataConfig();
+    setLiveApiForm(cleared);
+    setLiveApiMessage("Live data API key removed from this browser.");
   }
 
   async function handleLoginSubmit(e) {
@@ -556,7 +580,7 @@ export default function Admin() {
   }
 
   function handleCitySelection(nextCity) {
-    setCityForm((prev) => {
+    setCityForm(() => {
       const existing = cityIntelRows.find((item) => item.city === nextCity);
       if (!existing) return makeCityForm(nextCity);
       return {
@@ -1150,6 +1174,62 @@ export default function Admin() {
                 <h3>Market Scope</h3>
                 <GeoSelector selection={selection} onChange={setSelection} />
               </div>
+
+              {(canManageData || canManageAll) && (
+                <form className="card admin-form" onSubmit={handleLiveApiSubmit}>
+                  <h3>Live Data API Key</h3>
+                  <p>
+                    Recommended provider: Google Maps Platform with Places API and Routes API
+                    enabled. The key is used only while live charts or heatmaps are open.
+                  </p>
+                  <label className="admin-field">
+                    <span className="admin-field-label">Provider</span>
+                    <select
+                      value={liveApiForm.provider}
+                      onChange={(e) =>
+                        setLiveApiForm({ ...liveApiForm, provider: e.target.value })
+                      }
+                    >
+                      <option value="google_maps">Google Maps Platform</option>
+                      <option value="custom_market_data">Custom Market Data API</option>
+                    </select>
+                  </label>
+                  <label className="admin-field">
+                    <span className="admin-field-label">API Key</span>
+                    <input
+                      type="password"
+                      placeholder="Paste API key"
+                      value={liveApiForm.apiKey}
+                      onChange={(e) =>
+                        setLiveApiForm({ ...liveApiForm, apiKey: e.target.value })
+                      }
+                    />
+                    <span className="admin-field-help">
+                      Keep the key restricted in the provider dashboard. For Google web-service
+                      calls, prefer server/IP restrictions where possible.
+                    </span>
+                  </label>
+                  <label className="admin-role-option">
+                    <input
+                      type="checkbox"
+                      checked={liveApiForm.enabled}
+                      onChange={(e) =>
+                        setLiveApiForm({ ...liveApiForm, enabled: e.target.checked })
+                      }
+                    />
+                    Enable live API mode for graph refresh
+                  </label>
+                  <div className="admin-status-buttons">
+                    <button className="btn primary" type="submit">
+                      Save API Key
+                    </button>
+                    <button className="btn ghost" type="button" onClick={handleClearLiveApi}>
+                      Clear Key
+                    </button>
+                  </div>
+                  {liveApiMessage && <span className="admin-field-help">{liveApiMessage}</span>}
+                </form>
+              )}
 
               {canManageGeneral && (
                 <div className="admin-form-grid">

@@ -1,4 +1,5 @@
 import mockData from "../mockData";
+import { hasLiveDataApiKey, liveDataHeaders } from "./liveDataConfig";
 
 const USE_MOCKS = true;
 const API_BASE = "/api";
@@ -13,6 +14,10 @@ function isApiOnlyArea(area) {
   return API_ONLY_AREAS.has(normalizeArea(area));
 }
 
+function shouldUseApi(area, options = {}) {
+  return Boolean(options.forceLive || hasLiveDataApiKey() || isApiOnlyArea(area));
+}
+
 /* ---------------- INTERNAL HELPER ---------------- */
 async function handleResponse(res, fallbackMessage) {
   if (!res.ok) {
@@ -20,15 +25,17 @@ async function handleResponse(res, fallbackMessage) {
     try {
       const body = await res.json();
       detail = body.detail || JSON.stringify(body);
-    } catch {}
+    } catch {
+      detail = fallbackMessage;
+    }
     throw new Error(detail);
   }
   return res.json();
 }
 
 /* ---------------- AREA SNAPSHOT ---------------- */
-export async function fetchAreaSnapshot(areaId, version = null) {
-  const apiOnly = isApiOnlyArea(areaId);
+export async function fetchAreaSnapshot(areaId, version = null, options = {}) {
+  const apiOnly = shouldUseApi(areaId, options);
 
   if (USE_MOCKS && !apiOnly) {
     const fallback = mockData.areaSnapshots[areaId];
@@ -40,7 +47,7 @@ export async function fetchAreaSnapshot(areaId, version = null) {
   const url = `${BASE_URL}/areas/${encodeURIComponent(areaId)}${query}`;
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { headers: liveDataHeaders() });
     return handleResponse(res, "Failed to fetch area snapshot");
   } catch (err) {
     if (apiOnly) throw err;
@@ -51,8 +58,8 @@ export async function fetchAreaSnapshot(areaId, version = null) {
 }
 
 /* ---------------- HEATMAP (SINGLE SOURCE OF TRUTH) ---------------- */
-export async function fetchAreaHeatmap(scope = {}) {
-  const apiOnly = isApiOnlyArea(scope.area);
+export async function fetchAreaHeatmap(scope = {}, options = {}) {
+  const apiOnly = shouldUseApi(scope.area, options);
 
   if (USE_MOCKS && !apiOnly) {
     let data = mockData.heatmap;
@@ -77,7 +84,7 @@ export async function fetchAreaHeatmap(scope = {}) {
     : `${BASE_URL}/heatmap/areas`;
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { headers: liveDataHeaders() });
     return handleResponse(res, "Failed to fetch heatmap data");
   } catch (err) {
     if (apiOnly) throw err;
@@ -94,8 +101,8 @@ export async function fetchAreaHeatmap(scope = {}) {
 }
 
 /* ---------------- CITY MACRO ---------------- */
-export async function fetchCityMacro(cityId, areaId = null) {
-  const apiOnly = isApiOnlyArea(areaId);
+export async function fetchCityMacro(cityId, areaId = null, options = {}) {
+  const apiOnly = shouldUseApi(areaId, options);
 
   if (USE_MOCKS && !apiOnly) {
     const fallback = mockData.cityMacros[cityId];
@@ -104,7 +111,9 @@ export async function fetchCityMacro(cityId, areaId = null) {
   }
 
   try {
-    const res = await fetch(`${BASE_URL}/cities/${cityId}/macro`);
+    const res = await fetch(`${BASE_URL}/cities/${cityId}/macro`, {
+      headers: liveDataHeaders(),
+    });
     return handleResponse(res, "Failed to fetch city macro");
   } catch (err) {
     if (apiOnly) throw err;
@@ -115,8 +124,8 @@ export async function fetchCityMacro(cityId, areaId = null) {
 }
 
 /* ---------------- TIME SERIES ---------------- */
-export async function fetchAreaTimeSeries(area) {
-  const apiOnly = isApiOnlyArea(area);
+export async function fetchAreaTimeSeries(area, options = {}) {
+  const apiOnly = shouldUseApi(area, options);
 
   if (USE_MOCKS && !apiOnly) {
     const fallback = mockData.timeSeries[area];
@@ -126,7 +135,8 @@ export async function fetchAreaTimeSeries(area) {
 
   try {
     const res = await fetch(
-      `${API_BASE}/timeseries/areas?area=${encodeURIComponent(area)}`
+      `${API_BASE}/timeseries/areas?area=${encodeURIComponent(area)}`,
+      { headers: liveDataHeaders() }
     );
     return handleResponse(res, "Failed to fetch time series");
   } catch (err) {
