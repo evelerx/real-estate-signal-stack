@@ -50,6 +50,14 @@ The backend also exposes a model contract audit at:
 
 This audit checks whether the active area dataset contains the required model features and whether computed score, risk, and confidence outputs stay inside valid ranges.
 
+The synopsis-to-implementation traceability map is exposed at:
+
+```text
+/api/model/traceability
+```
+
+It maps the project problem statement, ML scoring, risk/confidence outputs, and base-paper alignment work to the files and live API endpoints that prove each part exists.
+
 Each area snapshot also includes the active model metadata in:
 
 ```text

@@ -53,6 +53,12 @@ Live methodology endpoint:
 /api/model/methodology
 ```
 
+Live synopsis traceability endpoint:
+
+```text
+/api/model/traceability
+```
+
 Area snapshots include model metadata:
 
 ```text

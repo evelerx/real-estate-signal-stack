@@ -12,6 +12,7 @@ from services.ml_methodology import (  # noqa: E402
     compute_area_model,
     get_area_model_formula,
     get_model_methodology,
+    get_project_traceability,
     load_model_config,
     logistic_probability,
     minmax_score,
@@ -86,3 +87,12 @@ def test_model_audit_contract():
     assert audit["score_range"]["min"] is not None
     assert audit["formula_endpoint"] == "/api/model/methodology"
     assert audit["config_path"] == "backend/config/model_config.json"
+
+
+def test_project_traceability_contract():
+    traceability = get_project_traceability()
+    assert traceability["title"] == "Synopsis To Implementation Traceability"
+    assert len(traceability["items"]) >= 5
+    statuses = {item["status"] for item in traceability["items"]}
+    assert "implemented" in statuses
+    assert "blocked_until_base_paper_uploaded" in statuses

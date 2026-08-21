@@ -27,7 +27,12 @@ from core.geo_data import build_area_data, build_area_access
 from services.area_adjustment_service import compute_area_adjustment
 from services.analyst_adjustment_service import compute_analyst_adjustment
 from services.allocation_map_service import map_bucket
-from services.ml_methodology import audit_model_contract, compute_area_model, get_model_methodology
+from services.ml_methodology import (
+    audit_model_contract,
+    compute_area_model,
+    get_model_methodology,
+    get_project_traceability,
+)
 from services.wakad_external_service import (
     fetch_wakad_heatmap,
     fetch_wakad_snapshot,
@@ -154,6 +159,11 @@ def model_methodology():
 @app.get("/model/audit")
 def model_audit():
     return audit_model_contract(AREA_DATA.values())
+
+
+@app.get("/model/traceability")
+def model_traceability():
+    return get_project_traceability()
 
 # ---------------- CITY MACRO ----------------
 

@@ -230,6 +230,51 @@ def get_model_methodology() -> dict:
     }
 
 
+def get_project_traceability() -> dict:
+    return {
+        "title": "Synopsis To Implementation Traceability",
+        "base_paper_status": MODEL_CONFIG["source_status"],
+        "items": [
+            {
+                "synopsis_requirement": "Explain the real-life real-estate decision problem",
+                "implementation": "Public introduction page describes fragmented market signals and the project solution.",
+                "evidence": ["/", "frontend/src/pages/Home.jsx"],
+                "status": "implemented",
+            },
+            {
+                "synopsis_requirement": "Compare locations using market intelligence indicators",
+                "implementation": "Area analysis combines connectivity, infrastructure, developer reliability, supply pressure, and search heat.",
+                "evidence": ["/api/areas/{area_id}", "backend/services/ml_methodology.py"],
+                "status": "implemented",
+            },
+            {
+                "synopsis_requirement": "Use machine-learning or formula-based scoring",
+                "implementation": "Transparent hybrid ML scoring uses min-max normalization, weighted composite scoring, and logistic risk probability.",
+                "evidence": ["/api/model/methodology", "backend/config/model_config.json"],
+                "status": "implemented_pending_paper_coefficients",
+            },
+            {
+                "synopsis_requirement": "Show risk and confidence, not only opportunity",
+                "implementation": "Area snapshots expose risk_probability_pct, ml_confidence_score, and risk_deductions.",
+                "evidence": ["/api/areas/wakad", "frontend/src/components/AnalysisPanel.jsx"],
+                "status": "implemented",
+            },
+            {
+                "synopsis_requirement": "Provide evaluator-visible verification",
+                "implementation": "Model audit endpoint checks required features and score/risk/confidence output ranges.",
+                "evidence": ["/api/model/audit", "backend/tests/test_ml_methodology.py"],
+                "status": "implemented",
+            },
+            {
+                "synopsis_requirement": "Align formulas to the base research paper",
+                "implementation": "Model weights and coefficients are isolated in JSON for replacement once the base paper is added.",
+                "evidence": ["backend/config/model_config.json", "docs/model-methodology.md"],
+                "status": "blocked_until_base_paper_uploaded",
+            },
+        ],
+    }
+
+
 def audit_model_contract(sample_rows: Iterable[dict]) -> dict:
     rows = list(sample_rows)
     scored = score_dataset(rows)

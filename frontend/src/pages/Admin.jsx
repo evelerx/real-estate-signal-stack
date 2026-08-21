@@ -42,7 +42,11 @@ import {
   getOpenRouterConfig,
   saveOpenRouterConfig,
 } from "../services/openRouterConfig";
-import { fetchModelAudit, fetchModelMethodology } from "../services/modelApi";
+import {
+  fetchModelAudit,
+  fetchModelMethodology,
+  fetchModelTraceability,
+} from "../services/modelApi";
 
 const ROLE_LABELS = {
   admin: "Admin",
@@ -412,6 +416,7 @@ export default function Admin() {
   const [openRouterMessage, setOpenRouterMessage] = useState("");
   const [modelMethodology, setModelMethodology] = useState(null);
   const [modelAudit, setModelAudit] = useState(null);
+  const [modelTraceability, setModelTraceability] = useState(null);
   const [modelError, setModelError] = useState("");
 
   const canManageAll = role === "admin";
@@ -487,12 +492,14 @@ export default function Admin() {
   async function refreshModelEvidence() {
     try {
       setModelError("");
-      const [methodology, audit] = await Promise.all([
+      const [methodology, audit, traceability] = await Promise.all([
         fetchModelMethodology(),
         fetchModelAudit(),
+        fetchModelTraceability(),
       ]);
       setModelMethodology(methodology);
       setModelAudit(audit);
+      setModelTraceability(traceability);
     } catch (err) {
       setModelError(err.message || "Failed to load model evidence");
     }
@@ -1342,6 +1349,15 @@ export default function Admin() {
                       <div key={key} className="admin-read-row">
                         <span>{key.replaceAll("_", " ")}</span>
                         <span>{Number(value).toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <h4>Synopsis Traceability</h4>
+                    {(modelTraceability?.items || []).slice(0, 4).map((item) => (
+                      <div key={item.synopsis_requirement} className="admin-read-row">
+                        <span>{item.synopsis_requirement}</span>
+                        <span>{item.status.replaceAll("_", " ")}</span>
                       </div>
                     ))}
                   </div>

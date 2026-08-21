@@ -21,3 +21,8 @@ export async function fetchModelAudit() {
   const res = await fetch(`${MODEL_BASE}/audit`);
   return handleResponse(res, "Failed to fetch model audit");
 }
+
+export async function fetchModelTraceability() {
+  const res = await fetch(`${MODEL_BASE}/traceability`);
+  return handleResponse(res, "Failed to fetch model traceability");
+}
