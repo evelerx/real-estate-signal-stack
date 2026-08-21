@@ -126,15 +126,15 @@ rental_yield
 Once the base paper is added to the repo, update:
 
 ```text
-backend/services/ml_methodology.py
+backend/config/model_config.json
 ```
 
 Replace:
 
 ```text
-AREA_SCORE_WEIGHTS
-RISK_LOGIT_WEIGHTS
-AREA_FEATURE_RANGES
+feature_weights
+risk_logit_weights
+feature_ranges
 ```
 
-with the exact variables, formulas, coefficients, and model choice from the paper. The API and report UI already expose this metadata, so the frontend will automatically reflect the paper-backed model.
+with the exact variables, formulas, coefficients, and model choice from the paper. The Python model loader reads this JSON at runtime and exposes it through the API and report UI.

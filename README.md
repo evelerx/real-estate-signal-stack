@@ -100,15 +100,15 @@ confidence =
 The referenced synopsis/base paper is not currently present in this repository. The project is prepared for paper alignment through:
 
 ```text
-backend/services/ml_methodology.py
+backend/config/model_config.json
 ```
 
 When the paper is added, update:
 
 ```text
-AREA_SCORE_WEIGHTS
-RISK_LOGIT_WEIGHTS
-AREA_FEATURE_RANGES
+feature_weights
+risk_logit_weights
+feature_ranges
 ```
 
 The backend API and frontend reports already expose those values automatically.

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
 import math
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Iterable
 
 
@@ -37,31 +39,108 @@ class AreaModelResult:
     formula: dict
 
 
+DEFAULT_MODEL_CONFIG = {
+    "model_version": "paper-ready-transparent-v1",
+    "source_status": "awaiting_base_paper",
+    "model_family": "transparent hybrid ML scoring",
+    "score_formula": "weighted_sum(minmax_normalized_features) adjusted by analyst_delta and risk_deduction",
+    "risk_formula": "logistic(intercept + weighted raw risk indicators)",
+    "normalization": "min-max normalization to 0-100; supply pressure is inverse-scored for opportunity",
+    "feature_ranges": {
+        "connectivity": {"low": 0.0, "high": 100.0, "inverse": False},
+        "infrastructure": {"low": 0.0, "high": 100.0, "inverse": False},
+        "builder_reliability": {"low": 0.0, "high": 100.0, "inverse": False},
+        "supply_pressure": {"low": 0.0, "high": 100.0, "inverse": True},
+        "search_heat": {"low": 0.0, "high": 100.0, "inverse": False},
+    },
+    "feature_weights": {
+        "connectivity": 0.25,
+        "infrastructure": 0.20,
+        "builder_reliability": 0.20,
+        "supply_pressure": 0.20,
+        "search_heat": 0.15,
+    },
+    "risk_logit_weights": {
+        "intercept": -2.10,
+        "supply_pressure": 0.030,
+        "builder_reliability": -0.026,
+        "infrastructure": -0.014,
+        "connectivity": -0.012,
+        "search_heat": -0.006,
+    },
+    "confidence_formula": {
+        "baseline": 72.0,
+        "builder_reliability_normalized_weight": 0.12,
+        "connectivity_normalized_weight": 0.08,
+        "analyst_delta_penalty": 28.0,
+        "risk_deduction_penalty": 0.45,
+        "risk_probability_penalty": 0.16,
+    },
+    "expected_training_columns": [
+        "connectivity",
+        "infrastructure",
+        "builder_reliability",
+        "supply_pressure",
+        "search_heat",
+        "price_growth",
+        "absorption_rate",
+        "inventory_months",
+        "rental_yield",
+    ],
+    "recommended_ml_upgrade": (
+        "Train Random Forest, Gradient Boosting, or XGBoost regression for price-growth/ROI prediction, "
+        "and logistic regression for binary investment-risk classification once historical labelled data is available."
+    ),
+    "paper_alignment_note": (
+        "Replace this JSON with exact variables, weights, coefficients, and model family "
+        "from the uploaded base paper."
+    ),
+}
+
+CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "model_config.json"
+CONFIG_DISPLAY_PATH = "backend/config/model_config.json"
+
+
+def load_model_config() -> dict:
+    try:
+        with CONFIG_PATH.open("r", encoding="utf-8") as handle:
+            loaded = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return DEFAULT_MODEL_CONFIG
+
+    config = DEFAULT_MODEL_CONFIG | loaded
+    config["feature_ranges"] = DEFAULT_MODEL_CONFIG["feature_ranges"] | loaded.get("feature_ranges", {})
+    config["feature_weights"] = DEFAULT_MODEL_CONFIG["feature_weights"] | loaded.get("feature_weights", {})
+    config["risk_logit_weights"] = DEFAULT_MODEL_CONFIG["risk_logit_weights"] | loaded.get("risk_logit_weights", {})
+    config["confidence_formula"] = DEFAULT_MODEL_CONFIG["confidence_formula"] | loaded.get("confidence_formula", {})
+    return config
+
+
+MODEL_CONFIG = load_model_config()
+
 AREA_FEATURE_RANGES = {
-    "connectivity": (0.0, 100.0, False),
-    "infrastructure": (0.0, 100.0, False),
-    "builder_reliability": (0.0, 100.0, False),
-    "supply_pressure": (0.0, 100.0, True),
-    "search_heat": (0.0, 100.0, False),
+    key: (
+        float(config.get("low", 0.0)),
+        float(config.get("high", 100.0)),
+        bool(config.get("inverse", False)),
+    )
+    for key, config in MODEL_CONFIG["feature_ranges"].items()
 }
 
 AREA_SCORE_WEIGHTS = {
-    "connectivity": 0.25,
-    "infrastructure": 0.20,
-    "builder_reliability": 0.20,
-    "supply_pressure": 0.20,
-    "search_heat": 0.15,
+    key: float(value)
+    for key, value in MODEL_CONFIG["feature_weights"].items()
 }
 
 RISK_LOGIT_WEIGHTS = {
-    "intercept": -2.10,
-    "supply_pressure": 0.030,
-    "builder_reliability": -0.026,
-    "infrastructure": -0.014,
-    "connectivity": -0.012,
-    "search_heat": -0.006,
+    key: float(value)
+    for key, value in MODEL_CONFIG["risk_logit_weights"].items()
 }
 
+CONFIDENCE_FORMULA = {
+    key: float(value)
+    for key, value in MODEL_CONFIG["confidence_formula"].items()
+}
 
 def normalize_area_features(area: dict) -> dict[str, float]:
     normalized = {}
@@ -89,12 +168,12 @@ def compute_area_model(
     risk_probability = logistic_probability(logit) * 100.0
 
     confidence = clamp(
-        72.0
-        + normalized["builder_reliability"] * 0.12
-        + normalized["connectivity"] * 0.08
-        - abs(analyst_delta) * 28.0
-        - risk_deduction * 0.45
-        - risk_probability * 0.16
+        CONFIDENCE_FORMULA["baseline"]
+        + normalized["builder_reliability"] * CONFIDENCE_FORMULA["builder_reliability_normalized_weight"]
+        + normalized["connectivity"] * CONFIDENCE_FORMULA["connectivity_normalized_weight"]
+        - abs(analyst_delta) * CONFIDENCE_FORMULA["analyst_delta_penalty"]
+        - risk_deduction * CONFIDENCE_FORMULA["risk_deduction_penalty"]
+        - risk_probability * CONFIDENCE_FORMULA["risk_probability_penalty"]
     )
 
     return AreaModelResult(
@@ -108,22 +187,21 @@ def compute_area_model(
 
 def get_area_model_formula() -> dict:
     return {
-        "model_family": "transparent hybrid ML scoring",
-        "score_formula": "weighted_sum(minmax_normalized_features) adjusted by analyst_delta and risk_deduction",
-        "risk_formula": "logistic(intercept + weighted raw risk indicators)",
-        "normalization": "min-max normalization to 0-100; supply pressure is inverse-scored for opportunity",
+        "model_version": MODEL_CONFIG["model_version"],
+        "source_status": MODEL_CONFIG["source_status"],
+        "config_path": CONFIG_DISPLAY_PATH,
+        "model_family": MODEL_CONFIG["model_family"],
+        "score_formula": MODEL_CONFIG["score_formula"],
+        "risk_formula": MODEL_CONFIG["risk_formula"],
+        "normalization": MODEL_CONFIG["normalization"],
         "feature_weights": AREA_SCORE_WEIGHTS,
         "risk_logit_weights": RISK_LOGIT_WEIGHTS,
+        "confidence_formula": CONFIDENCE_FORMULA,
         "feature_ranges": {
             key: {"low": low, "high": high, "inverse": inverse}
             for key, (low, high, inverse) in AREA_FEATURE_RANGES.items()
         },
-        "paper_alignment_note": (
-            "Designed to match common real-estate intelligence papers that combine "
-            "location quality, infrastructure growth, developer execution, supply risk, "
-            "and demand/search signals. Replace weights with the base-paper coefficients "
-            "when the source document is added to the repo."
-        ),
+        "paper_alignment_note": MODEL_CONFIG["paper_alignment_note"],
     }
 
 
@@ -147,21 +225,8 @@ def get_model_methodology() -> dict:
                 "formula": "starts from data quality baseline and deducts volatility, overrides, model risk, and stale inputs",
             },
         ],
-        "expected_training_columns": [
-            "connectivity",
-            "infrastructure",
-            "builder_reliability",
-            "supply_pressure",
-            "search_heat",
-            "price_growth",
-            "absorption_rate",
-            "inventory_months",
-            "rental_yield",
-        ],
-        "recommended_ml_upgrade": (
-            "Train Random Forest, Gradient Boosting, or XGBoost regression for price-growth/ROI prediction, "
-            "and logistic regression for binary investment-risk classification once historical labelled data is available."
-        ),
+        "expected_training_columns": MODEL_CONFIG["expected_training_columns"],
+        "recommended_ml_upgrade": MODEL_CONFIG["recommended_ml_upgrade"],
     }
 
 
@@ -204,6 +269,9 @@ def audit_model_contract(sample_rows: Iterable[dict]) -> dict:
         },
         "formula_endpoint": "/api/model/methodology",
         "area_snapshot_field": "score_composition.model_formula",
+        "model_version": MODEL_CONFIG["model_version"],
+        "source_status": MODEL_CONFIG["source_status"],
+        "config_path": CONFIG_DISPLAY_PATH,
     }
 
 

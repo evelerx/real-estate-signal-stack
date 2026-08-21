@@ -10,7 +10,9 @@ from services.ml_methodology import (  # noqa: E402
     AREA_SCORE_WEIGHTS,
     audit_model_contract,
     compute_area_model,
+    get_area_model_formula,
     get_model_methodology,
+    load_model_config,
     logistic_probability,
     minmax_score,
 )
@@ -56,6 +58,14 @@ def test_methodology_contract():
     assert methodology["title"] == "Real Estate Signal Stack Model Methodology"
     assert methodology["modules"][0]["target"] == "capital_allocation_score"
     assert "recommended_ml_upgrade" in methodology
+    assert get_area_model_formula()["config_path"] == "backend/config/model_config.json"
+
+
+def test_model_config_loads_from_json():
+    config = load_model_config()
+    assert config["model_version"] == "paper-ready-transparent-v1"
+    assert config["source_status"] == "awaiting_base_paper"
+    assert config["feature_weights"] == AREA_SCORE_WEIGHTS
 
 
 def test_model_audit_contract():
@@ -75,3 +85,4 @@ def test_model_audit_contract():
     assert audit["rows_checked"] == 1
     assert audit["score_range"]["min"] is not None
     assert audit["formula_endpoint"] == "/api/model/methodology"
+    assert audit["config_path"] == "backend/config/model_config.json"

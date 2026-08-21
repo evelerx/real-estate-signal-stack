@@ -1,0 +1,51 @@
+{
+  "model_version": "paper-ready-transparent-v1",
+  "source_status": "awaiting_base_paper",
+  "model_family": "transparent hybrid ML scoring",
+  "score_formula": "weighted_sum(minmax_normalized_features) adjusted by analyst_delta and risk_deduction",
+  "risk_formula": "logistic(intercept + weighted raw risk indicators)",
+  "normalization": "min-max normalization to 0-100; supply pressure is inverse-scored for opportunity",
+  "feature_ranges": {
+    "connectivity": { "low": 0.0, "high": 100.0, "inverse": false },
+    "infrastructure": { "low": 0.0, "high": 100.0, "inverse": false },
+    "builder_reliability": { "low": 0.0, "high": 100.0, "inverse": false },
+    "supply_pressure": { "low": 0.0, "high": 100.0, "inverse": true },
+    "search_heat": { "low": 0.0, "high": 100.0, "inverse": false }
+  },
+  "feature_weights": {
+    "connectivity": 0.25,
+    "infrastructure": 0.20,
+    "builder_reliability": 0.20,
+    "supply_pressure": 0.20,
+    "search_heat": 0.15
+  },
+  "risk_logit_weights": {
+    "intercept": -2.10,
+    "supply_pressure": 0.030,
+    "builder_reliability": -0.026,
+    "infrastructure": -0.014,
+    "connectivity": -0.012,
+    "search_heat": -0.006
+  },
+  "confidence_formula": {
+    "baseline": 72.0,
+    "builder_reliability_normalized_weight": 0.12,
+    "connectivity_normalized_weight": 0.08,
+    "analyst_delta_penalty": 28.0,
+    "risk_deduction_penalty": 0.45,
+    "risk_probability_penalty": 0.16
+  },
+  "expected_training_columns": [
+    "connectivity",
+    "infrastructure",
+    "builder_reliability",
+    "supply_pressure",
+    "search_heat",
+    "price_growth",
+    "absorption_rate",
+    "inventory_months",
+    "rental_yield"
+  ],
+  "recommended_ml_upgrade": "Train Random Forest, Gradient Boosting, or XGBoost regression for price-growth/ROI prediction, and logistic regression for binary investment-risk classification once historical labelled data is available.",
+  "paper_alignment_note": "Replace this JSON with exact variables, weights, coefficients, and model family from the uploaded base paper."
+}
