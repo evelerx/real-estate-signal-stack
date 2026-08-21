@@ -8,6 +8,7 @@ if str(BACKEND_DIR) not in sys.path:
 
 from services.ml_methodology import (  # noqa: E402
     AREA_SCORE_WEIGHTS,
+    DEFAULT_MODEL_CONFIG,
     audit_model_contract,
     compute_area_model,
     get_area_model_formula,
@@ -17,6 +18,7 @@ from services.ml_methodology import (  # noqa: E402
     logistic_probability,
     minmax_score,
 )
+from tools.generate_model_config_from_mapping import build_model_config_from_mapping  # noqa: E402
 
 
 def assert_between(value, low, high):
@@ -65,8 +67,8 @@ def test_methodology_contract():
 
 def test_model_config_loads_from_json():
     config = load_model_config()
-    assert config["model_version"] == "paper-ready-transparent-v1"
-    assert config["source_status"] == "awaiting_base_paper"
+    assert config["model_version"] == "base-paper-aligned-2019"
+    assert config["source_status"] == "base_paper_aligned"
     assert config["feature_weights"] == AREA_SCORE_WEIGHTS
 
 
@@ -98,4 +100,36 @@ def test_project_traceability_contract():
     assert traceability["base_paper_handoff"]["config_to_update"] == "backend/config/model_config.json"
     statuses = {item["status"] for item in traceability["items"]}
     assert "implemented" in statuses
-    assert "blocked_until_base_paper_uploaded" in statuses
+    assert "paper_aligned" in statuses
+
+
+def test_base_paper_mapping_converter():
+    generated = build_model_config_from_mapping(
+        {
+            "paper_identity": {
+                "paper_title": "Real Estate Intelligence Example",
+                "publication_year": 2026,
+            },
+            "research_target": {
+                "target_variable": "price_growth_pct",
+                "target_type": "regression",
+            },
+            "model_details": {
+                "model_family": "random forest regression",
+                "algorithm": "Random Forest",
+                "normalization": "z-score normalization",
+            },
+            "config_updates": {
+                "feature_weights": {
+                    "connectivity": 0.30,
+                    "infrastructure": 0.25,
+                }
+            },
+        }
+    )
+
+    assert generated["source_status"] == "base_paper_aligned"
+    assert generated["model_version"] == "paper-aligned-2026"
+    assert generated["model_family"] == "random forest regression"
+    assert generated["feature_weights"]["connectivity"] == 0.30
+    assert generated["feature_weights"]["builder_reliability"] == DEFAULT_MODEL_CONFIG["feature_weights"]["builder_reliability"]

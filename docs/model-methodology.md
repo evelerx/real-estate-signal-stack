@@ -2,7 +2,9 @@
 
 This project implements a real-estate intelligence workflow for comparing micro-markets, scoring capital allocation opportunities, and explaining the risk behind each score.
 
-The current repository does not include the referenced synopsis or base paper file. Until that paper is added, the implementation uses a transparent hybrid model that follows the same structure commonly used in real-estate intelligence research: normalize market indicators, compute a weighted opportunity score, estimate risk probability with a logistic model, and expose every coefficient for review.
+The active model is aligned to the project base paper: **Real Estate Investment Choices and Decision Support Systems** by Vincenzo Del Giudice, Pierfrancesco De Paola, Torrieri Francesca, Peter J. Nijkamp, and Aviad Shapira, published in Sustainability 2019, 11, 3110.
+
+The paper proposes a decision support system for real-estate investment choices using Analytic Hierarchy Process (AHP), a stated preference experiment, and multinomial logit calibration. The project maps that framework to live dashboard indicators: normalize market indicators, compute an AHP-weighted attractiveness score, estimate risk probability with a logistic model, and expose every coefficient for review.
 
 ## Model Inputs
 
@@ -10,9 +12,9 @@ The area scoring model currently uses these inputs:
 
 | Feature | Meaning | Direction |
 | --- | --- | --- |
-| `connectivity` | Road/transit/access quality | Higher is better |
-| `infrastructure` | Infrastructure pipeline and civic readiness | Higher is better |
-| `builder_reliability` | Developer execution quality | Higher is better |
+| `connectivity` | Paper accessibility attribute, represented as road/transit/access quality | Higher is better |
+| `infrastructure` | Paper environmental quality attribute, represented as infrastructure and place quality | Higher is better |
+| `builder_reliability` | Paper socioeconomic context attribute, used as execution/social context confidence proxy | Higher is better |
 | `supply_pressure` | Oversupply and inventory stress | Lower is better |
 | `search_heat` | Demand/search interest proxy | Higher is better |
 
@@ -29,11 +31,11 @@ score = weighted_sum(minmax_normalized_features) * final_adjustment_factor - ris
 Current feature weights:
 
 ```text
-connectivity         = 0.25
-infrastructure       = 0.20
-builder_reliability  = 0.20
-supply_pressure      = 0.20
-search_heat          = 0.15
+connectivity         = 0.153775
+infrastructure       = 0.304988
+builder_reliability  = 0.269308
+supply_pressure      = 0.100000
+search_heat          = 0.082376
 ```
 
 The backend exposes these weights at:
@@ -78,9 +80,9 @@ Where:
 z =
   intercept
   + supply_pressure * 0.030
-  - builder_reliability * 0.026
-  - infrastructure * 0.014
-  - connectivity * 0.012
+  - builder_reliability * 0.0147
+  - infrastructure * 0.0148
+  - connectivity * 0.00426
   - search_heat * 0.006
 ```
 
@@ -106,7 +108,7 @@ The final value is clamped to the 0-100 range.
 
 ## ML Upgrade Path
 
-When labelled historical data is available, the current transparent model can be upgraded to:
+When labelled historical Indian micro-market data is available, the paper-backed model can be upgraded to:
 
 | Target | Recommended model |
 | --- | --- |
@@ -131,25 +133,16 @@ rental_yield
 
 ## Base Paper Alignment
 
-Once the base paper is added to the repo, update:
+The filled base-paper mapping is stored at:
 
 ```text
-backend/config/model_config.json
+backend/config/base_paper_mapping.filled.json
 ```
 
-Use this extraction guide first:
+It records paper identity, variable mapping, AHP weights, stated-preference design details, and multinomial-logit coefficients. To regenerate a draft config from that mapping, run:
 
 ```text
-docs/base-paper-extraction-template.md
-backend/config/base_paper_mapping.template.json
+backend\venv\Scripts\python.exe backend\tools\generate_model_config_from_mapping.py backend\config\base_paper_mapping.filled.json --output backend\config\model_config.generated.json
 ```
 
-Replace:
-
-```text
-feature_weights
-risk_logit_weights
-feature_ranges
-```
-
-with the exact variables, formulas, coefficients, and model choice from the paper. The Python model loader reads this JSON at runtime and exposes it through the API and report UI.
+The production model loader reads `backend/config/model_config.json` at runtime and exposes it through the API and report UI.

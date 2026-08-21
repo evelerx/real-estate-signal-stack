@@ -1,0 +1,94 @@
+{
+  "paper_identity": {
+    "paper_title": "Real Estate Investment Choices and Decision Support Systems",
+    "authors": [
+      "Vincenzo Del Giudice",
+      "Pierfrancesco De Paola",
+      "Torrieri Francesca",
+      "Peter J. Nijkamp",
+      "Aviad Shapira"
+    ],
+    "publication_year": 2019,
+    "publication_or_conference": "Sustainability 2019, 11, 3110",
+    "doi_or_url": "10.3390/su11113110",
+    "pages_used_for_model": [3, 4, 7, 8, 10, 11, 14, 15]
+  },
+  "research_target": {
+    "target_variable": "territorial_attractiveness",
+    "target_type": "ranking and discrete choice probability",
+    "business_meaning": "Areal utility/perceived attractiveness measures how strongly a territory can attract real estate investment choices."
+  },
+  "variable_mapping": [
+    {
+      "paper_variable": "Accessibility",
+      "paper_definition": "Access time from house to main services and urban infrastructure.",
+      "project_variable": "connectivity",
+      "transform_needed": "Invert travel-time friction into a 0-100 connectivity score; higher means easier access."
+    },
+    {
+      "paper_variable": "Environmental quality",
+      "paper_definition": "Presence of green areas and perceived environmental quality on high/medium/low ordinal levels.",
+      "project_variable": "infrastructure",
+      "transform_needed": "Represent as environmental/infrastructure quality on a 0-100 normalized score."
+    },
+    {
+      "paper_variable": "Socioeconomic context",
+      "paper_definition": "Safety and quality-of-life context on high/medium/low ordinal levels.",
+      "project_variable": "builder_reliability",
+      "transform_needed": "Use as the project's execution/social context confidence proxy until a dedicated safety feature is added."
+    },
+    {
+      "paper_variable": "Choice scenario pressure",
+      "paper_definition": "Scenarios compare trade-offs among context attributes under constrained alternatives.",
+      "project_variable": "supply_pressure",
+      "transform_needed": "Project extension: inverse-scored oversupply/inventory stress."
+    },
+    {
+      "paper_variable": "Sense of belonging",
+      "paper_definition": "Sense of belonging to a place, associated with place identity.",
+      "project_variable": "search_heat",
+      "transform_needed": "Project extension: demand/search interest proxy for revealed market attention."
+    }
+  ],
+  "model_details": {
+    "model_family": "AHP-weighted decision support system with multinomial logit calibration",
+    "algorithm": "Analytic Hierarchy Process, stated preference fractional factorial design, multinomial logit",
+    "normalization": "Project inputs normalized to 0-100; paper qualitative high/medium/low levels mapped to ordinal score bands.",
+    "training_split": "Pilot survey: 38 respondents, 337 stated-preference observations.",
+    "evaluation_metrics": {
+      "likelihood_ratio_test": 66548,
+      "rho_square": 0.09,
+      "adjusted_rho_square": 0.082,
+      "accessibility_beta": 0.0426,
+      "environmental_quality_beta": 0.148,
+      "socioeconomic_context_beta": -0.147
+    }
+  },
+  "config_updates": {
+    "feature_weights": {
+      "connectivity": 0.153775,
+      "infrastructure": 0.304988,
+      "builder_reliability": 0.269308,
+      "supply_pressure": 0.1,
+      "search_heat": 0.082376
+    },
+    "risk_logit_weights": {
+      "intercept": -2.1,
+      "supply_pressure": 0.03,
+      "builder_reliability": -0.0147,
+      "infrastructure": -0.0148,
+      "connectivity": -0.00426,
+      "search_heat": -0.006
+    },
+    "confidence_formula": {
+      "baseline": 72.0,
+      "builder_reliability_normalized_weight": 0.12,
+      "connectivity_normalized_weight": 0.08,
+      "analyst_delta_penalty": 28.0,
+      "risk_deduction_penalty": 0.45,
+      "risk_probability_penalty": 0.16
+    },
+    "risk_formula": "logistic scaled from paper multinomial-logit beta signs plus project supply-risk extension"
+  },
+  "notes": "AHP aggregate weights from Table 4 are mapped to the project's operational indicators. Table 6 beta values are scaled for 0-100 inputs to avoid over-saturating the project risk probability."
+}

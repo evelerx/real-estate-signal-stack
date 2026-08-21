@@ -11,7 +11,7 @@ function loadStoredAuth() {
     const parsed = JSON.parse(raw);
     if (parsed.role && parsed.role !== "admin") return null;
     return {
-      role: parsed.role || "viewer",
+      role: "admin",
       accessToken: parsed.accessToken || null,
       refreshToken: parsed.refreshToken || null,
     };
@@ -35,16 +35,10 @@ function loadStoredSubscription() {
   }
 }
 
-/**
- * Roles:
- * - viewer (default)
- * - admin
- */
 export function AuthProvider({ children }) {
   const stored = loadStoredAuth();
   const storedSubscription = loadStoredSubscription();
-  // ================= EXISTING ROLE SYSTEM =================
-  const [role, setRole] = useState(stored?.role || "viewer");
+  const [role, setRole] = useState(stored?.role || "admin");
 
   // ================= NEW: JWT TOKENS (MEMORY ONLY) =================
   const [accessToken, setAccessToken] = useState(stored?.accessToken || null);
@@ -61,22 +55,14 @@ export function AuthProvider({ children }) {
 
   // ================= LOGIN / LOGOUT =================
   const login = useCallback((tokens) => {
-    /**
-     * Expected payload from backend:
-     * {
-     *   access_token: string,
-     *   refresh_token: string,
-     *   role: "viewer" | "admin"
-     * }
-     */
     setAccessToken(tokens.access_token);
     setRefreshToken(tokens.refresh_token);
-    setRole(tokens.role || "viewer");
+    setRole("admin");
     try {
       localStorage.setItem(
         AUTH_STORAGE_KEY,
         JSON.stringify({
-          role: tokens.role || "viewer",
+          role: "admin",
           accessToken: tokens.access_token || null,
           refreshToken: tokens.refresh_token || null,
         })
@@ -87,7 +73,7 @@ export function AuthProvider({ children }) {
   const logout = useCallback(() => {
     setAccessToken(null);
     setRefreshToken(null);
-    setRole("viewer");
+    setRole("admin");
     try {
       localStorage.removeItem(AUTH_STORAGE_KEY);
     } catch {}
@@ -138,7 +124,7 @@ export function AuthProvider({ children }) {
     role,
     setRole,
 
-    isViewer: role === "viewer",
+    isViewer: false,
     isAdmin: role === "admin",
 
     // --- new ---

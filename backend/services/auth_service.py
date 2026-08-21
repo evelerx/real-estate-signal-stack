@@ -1,15 +1,10 @@
 from datetime import datetime, timedelta
-import hashlib
-import hmac
 import os
-import secrets
 
-from jose import jwt, JWTError
-from fastapi import HTTPException, Depends
+from jose import jwt
+from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-
-from models.staff_user import StaffUser
 
 SECRET_KEY = "CHANGE_THIS_IN_ENV"
 ALGORITHM = "HS256"
@@ -26,47 +21,13 @@ def create_token(data: dict, expires_delta: timedelta):
     payload["exp"] = datetime.utcnow() + expires_delta
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-def hash_password(password: str) -> str:
-    salt = secrets.token_hex(16)
-    hashed = hashlib.pbkdf2_hmac(
-        "sha256",
-        password.encode("utf-8"),
-        bytes.fromhex(salt),
-        120_000,
-    ).hex()
-    return f"{salt}${hashed}"
-
-
-def verify_password(password: str, stored: str) -> bool:
-    try:
-        salt, hashed = stored.split("$", 1)
-    except ValueError:
-        return False
-    test = hashlib.pbkdf2_hmac(
-        "sha256",
-        password.encode("utf-8"),
-        bytes.fromhex(salt),
-        120_000,
-    ).hex()
-    return hmac.compare_digest(test, hashed)
-
 
 def authenticate(username: str | None = None, password: str | None = None, db: Session | None = None):
     normalized = (username or ADMIN_USERNAME).strip().lower() or ADMIN_USERNAME
     if normalized == ADMIN_USERNAME.lower():
         return {"username": normalized, "role": "admin"}
 
-    if db is None:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    user = (
-        db.query(StaffUser)
-        .filter(StaffUser.username == normalized, StaffUser.is_active.is_(True))
-        .first()
-    )
-    if not user or not password or not verify_password(password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {"username": user.username, "role": "admin"}
+    raise HTTPException(status_code=401, detail="Use the admin account for this portal")
 
 def issue_tokens(user: dict):
     access = create_token(

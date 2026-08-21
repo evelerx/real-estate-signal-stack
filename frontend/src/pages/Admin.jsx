@@ -363,7 +363,6 @@ export default function Admin() {
   const { role, accessToken, isAuthenticated, login, logout } = useAuth();
 
   const [loginForm, setLoginForm] = useState({
-    username: "admin",
     error: "",
     loading: false,
   });
@@ -419,10 +418,10 @@ export default function Admin() {
   const [modelTraceability, setModelTraceability] = useState(null);
   const [modelError, setModelError] = useState("");
 
-  const canManageAll = role === "admin";
-  const canManageData = role === "admin";
-  const canManageGeneral = role === "admin";
-  const canViewData = role === "admin";
+  const canManageAll = true;
+  const canManageData = true;
+  const canManageGeneral = true;
+  const canViewData = true;
 
   function toNumber(value) {
     const n = Number(value);
@@ -509,11 +508,9 @@ export default function Admin() {
     e.preventDefault();
     try {
       setLoginForm((prev) => ({ ...prev, loading: true, error: "" }));
-      const tokens = await loginStaff({
-        username: loginForm.username.trim().toLowerCase() || "admin",
-      });
+      const tokens = await loginStaff();
       login(tokens);
-      setLoginForm({ username: "admin", error: "", loading: false });
+      setLoginForm({ error: "", loading: false });
     } catch (err) {
       setLoginForm((prev) => ({
         ...prev,
@@ -937,7 +934,7 @@ export default function Admin() {
             <span className="brand-mark">A</span>
             <div>
               <p className="brand-title">Apex Signal Capital</p>
-              <p className="brand-subtitle">Staff Intelligence Console</p>
+              <p className="brand-subtitle">Admin Intelligence Console</p>
             </div>
           </div>
 
@@ -967,7 +964,7 @@ export default function Admin() {
               <p className="eyebrow">Internal Operations</p>
               <h1>Admin access for real estate signal operations.</h1>
               <p className="lead">
-                A secure workspace to curate listings, manage analyst inputs, and
+                A secure workspace to curate listings, manage admin inputs, and
                 validate market signals before they reach clients.
               </p>
               <div className="cta-row">
@@ -1032,7 +1029,7 @@ export default function Admin() {
                 Each module is anchored to a market scope.
               </p>
               <ul className="admin-feature-list">
-                <li>Role-based unlock sequences</li>
+                <li>Single Admin unlock flow</li>
                 <li>Structured listing intake</li>
                 <li>Broker deal reconciliation</li>
                 <li>Validation notes with audit cues</li>
@@ -1050,7 +1047,7 @@ export default function Admin() {
               <div className="card">
                 <h3>Analyst Review Layer</h3>
                 <p>
-                  Validate and clean inputs with admin-controlled permissions and
+                  Validate and clean inputs with one Admin-controlled workflow and
                   structured updates for each corridor.
                 </p>
               </div>
@@ -1078,15 +1075,6 @@ export default function Admin() {
                 <h3>Admin Portal</h3>
                 <p>No password is required for the project demo console.</p>
                 <form onSubmit={handleLoginSubmit} className="admin-form">
-                  <input
-                    type="text"
-                    placeholder="Username"
-                    value={loginForm.username}
-                    onChange={(e) =>
-                      setLoginForm({ ...loginForm, username: e.target.value, error: "" })
-                    }
-                    required
-                  />
                   {loginForm.error && (
                     <span className="admin-error">{loginForm.error}</span>
                   )}
@@ -1117,7 +1105,7 @@ export default function Admin() {
           ) : (
             <div className="admin-status-banner">
               <p>
-                Role: <strong>{ROLE_LABELS[role] || role}</strong>
+                Portal: <strong>{ROLE_LABELS[role] || "Admin"}</strong>
               </p>
               <div className="admin-status-actions">
                 <p>Access unlocked. Proceed to the workflow tools below.</p>

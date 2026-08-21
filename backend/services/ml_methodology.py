@@ -262,9 +262,9 @@ def get_project_traceability() -> dict:
             },
             {
                 "synopsis_requirement": "Use machine-learning or formula-based scoring",
-                "implementation": "Transparent hybrid ML scoring uses min-max normalization, weighted composite scoring, and logistic risk probability.",
+                "implementation": "Base-paper-aligned scoring uses AHP-style weighted attractiveness scoring and logistic risk probability.",
                 "evidence": ["/api/model/methodology", "backend/config/model_config.json"],
-                "status": "implemented_pending_paper_coefficients",
+                "status": "paper_aligned",
             },
             {
                 "synopsis_requirement": "Show risk and confidence, not only opportunity",
@@ -280,9 +280,9 @@ def get_project_traceability() -> dict:
             },
             {
                 "synopsis_requirement": "Align formulas to the base research paper",
-                "implementation": "Model weights and coefficients are isolated in JSON for replacement once the base paper is added.",
-                "evidence": ["backend/config/model_config.json", "docs/model-methodology.md"],
-                "status": "blocked_until_base_paper_uploaded",
+                "implementation": "Model config maps the base paper's AHP aggregate weights and multinomial-logit coefficients to project dashboard indicators.",
+                "evidence": ["backend/config/base_paper_mapping.filled.json", "backend/config/model_config.json", "docs/model-methodology.md"],
+                "status": "paper_aligned",
             },
         ],
     }

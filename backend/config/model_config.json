@@ -1,10 +1,10 @@
 {
-  "model_version": "paper-ready-transparent-v1",
-  "source_status": "awaiting_base_paper",
-  "model_family": "transparent hybrid ML scoring",
-  "score_formula": "weighted_sum(minmax_normalized_features) adjusted by analyst_delta and risk_deduction",
-  "risk_formula": "logistic(intercept + weighted raw risk indicators)",
-  "normalization": "min-max normalization to 0-100; supply pressure is inverse-scored for opportunity",
+  "model_version": "base-paper-aligned-2019",
+  "source_status": "base_paper_aligned",
+  "model_family": "AHP-weighted decision support system with multinomial logit calibration",
+  "score_formula": "AHP-weighted territorial attractiveness score over normalized accessibility/connectivity, environmental/infrastructure quality, socioeconomic/execution context, supply pressure, and demand heat.",
+  "risk_formula": "logistic scaled from paper multinomial-logit beta signs plus project supply-risk extension",
+  "normalization": "Project inputs normalized to 0-100; paper qualitative high/medium/low levels mapped to ordinal score bands; supply pressure is inverse-scored for opportunity",
   "feature_ranges": {
     "connectivity": { "low": 0.0, "high": 100.0, "inverse": false },
     "infrastructure": { "low": 0.0, "high": 100.0, "inverse": false },
@@ -13,18 +13,18 @@
     "search_heat": { "low": 0.0, "high": 100.0, "inverse": false }
   },
   "feature_weights": {
-    "connectivity": 0.25,
-    "infrastructure": 0.20,
-    "builder_reliability": 0.20,
-    "supply_pressure": 0.20,
-    "search_heat": 0.15
+    "connectivity": 0.153775,
+    "infrastructure": 0.304988,
+    "builder_reliability": 0.269308,
+    "supply_pressure": 0.100000,
+    "search_heat": 0.082376
   },
   "risk_logit_weights": {
     "intercept": -2.10,
     "supply_pressure": 0.030,
-    "builder_reliability": -0.026,
-    "infrastructure": -0.014,
-    "connectivity": -0.012,
+    "builder_reliability": -0.0147,
+    "infrastructure": -0.0148,
+    "connectivity": -0.00426,
     "search_heat": -0.006
   },
   "confidence_formula": {
@@ -46,6 +46,6 @@
     "inventory_months",
     "rental_yield"
   ],
-  "recommended_ml_upgrade": "Train Random Forest, Gradient Boosting, or XGBoost regression for price-growth/ROI prediction, and logistic regression for binary investment-risk classification once historical labelled data is available.",
-  "paper_alignment_note": "Replace this JSON with exact variables, weights, coefficients, and model family from the uploaded base paper."
+  "recommended_ml_upgrade": "Extend the paper-backed AHP plus multinomial-logit model with labelled Indian micro-market observations, then compare Logistic Regression, Random Forest, Gradient Boosting, and XGBoost for investment-choice and risk prediction.",
+  "paper_alignment_note": "Aligned to the base paper Real Estate Investment Choices and Decision Support Systems, Sustainability 2019, 11, 3110. AHP aggregate weights from Table 4 and multinomial-logit coefficient signs from Table 6 are mapped to the project's operational dashboard variables."
 }

@@ -23,7 +23,7 @@ The website acts as a real-estate intelligence stack:
 - Calculate capital allocation opportunity scores.
 - Estimate downside risk using a logistic risk model.
 - Display explainable reports, dashboards, heatmaps, and data sheets.
-- Allow Admin-only workflow control without the old CEO/Data Analyst hierarchy.
+- Allow one Admin-only workflow with no multi-role hierarchy.
 
 ## Core Modules
 
@@ -39,7 +39,7 @@ The website acts as a real-estate intelligence stack:
 
 ## Machine Learning And Formula Layer
 
-The active backend model is a transparent hybrid ML-style scoring layer. It is intentionally explainable for final-year evaluation and can be replaced with exact coefficients from the base paper once that file is added.
+The active backend model is aligned to the base paper, **Real Estate Investment Choices and Decision Support Systems**. It uses AHP-style attractiveness weights and multinomial-logit coefficient signs mapped onto the project's dashboard indicators.
 
 Current model documentation:
 
@@ -103,28 +103,37 @@ confidence =
 
 ## Base Paper Alignment Status
 
-The referenced synopsis/base paper is not currently present in this repository. The project is prepared for paper alignment through:
+The base paper has been mapped into:
 
 ```text
+backend/config/base_paper_mapping.filled.json
 backend/config/model_config.json
 ```
 
-Base-paper extraction guide:
+The mapped technical evidence includes:
+
+```text
+Paper: Real Estate Investment Choices and Decision Support Systems
+Method: Analytic Hierarchy Process + stated preference experiment + multinomial logit
+Sample: 38 pilot respondents, 337 observations
+Weights: Table 4 aggregate contextual AHP weights
+Coefficients: Table 6 multinomial-logit beta signs, scaled for 0-100 dashboard inputs
+```
+
+Base-paper extraction templates remain available for future paper revisions:
 
 ```text
 docs/base-paper-extraction-template.md
 backend/config/base_paper_mapping.template.json
 ```
 
-When the paper is added, update:
+Generate a paper-aligned model config from a filled mapping:
 
-```text
-feature_weights
-risk_logit_weights
-feature_ranges
+```bash
+backend\venv\Scripts\python.exe backend\tools\generate_model_config_from_mapping.py backend\config\base_paper_mapping.filled.json --output backend\config\model_config.generated.json
 ```
 
-The backend API and frontend reports already expose those values automatically.
+The backend API and frontend reports expose the active paper-aligned values automatically.
 
 ## Local Development
 

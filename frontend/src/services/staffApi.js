@@ -40,11 +40,11 @@ async function handleResponse(res) {
   return res.json();
 }
 
-export async function loginStaff({ username, password }) {
+export async function loginStaff() {
   const res = await fetch(`${AUTH_BASE}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ username: "admin" }),
   });
   return handleResponse(res);
 }

@@ -1,6 +1,6 @@
 # Base Paper Extraction Template
 
-Use this checklist when the referenced "Real Estate Intelligence" base paper is added to the project. The goal is to translate the paper into `backend/config/model_config.json` without changing application code.
+Use this checklist when the referenced "Real Estate Intelligence" base paper is revised or replaced. The current filled mapping is `backend/config/base_paper_mapping.filled.json`; the goal is to translate paper changes into `backend/config/model_config.json` without changing application code.
 
 ## 1. Paper Identity
 
@@ -127,6 +127,18 @@ Set:
   "expected_training_columns": [],
   "paper_alignment_note": ""
 }
+```
+
+You can generate a config draft automatically from a filled mapping file:
+
+```bash
+backend\venv\Scripts\python.exe backend\tools\generate_model_config_from_mapping.py backend\config\base_paper_mapping.filled.json --output backend\config\model_config.generated.json
+```
+
+Review the generated file, then copy the approved values into:
+
+```text
+backend/config/model_config.json
 ```
 
 ## 7. Verification

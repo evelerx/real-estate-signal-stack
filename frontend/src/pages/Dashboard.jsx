@@ -4,8 +4,7 @@ import Sidebar from "../components/Sidebar";
 import MainPanel from "../components/MainPanel";
 
 // TEMP ROLE FLAG — will be replaced by auth later
-const ROLE = "viewer";
-// possible values later: "viewer" | "analyst" | "admin"
+const ROLE = "admin";
 
 export default function Dashboard() {
   const [selectedArea, setSelectedArea] = useState(null);
