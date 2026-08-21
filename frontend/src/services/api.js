@@ -160,7 +160,7 @@ export async function saveAnalystAdjustments(area, adjustments) {
     body: JSON.stringify({ area, adjustments }),
   });
 
-  return handleResponse(res, "Failed to save analyst adjustments");
+  return handleResponse(res, "Failed to save Admin adjustments");
 }
 
 /* ---------------- ANALYST NOTES ---------------- */

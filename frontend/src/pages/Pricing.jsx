@@ -96,7 +96,7 @@ export default function Pricing() {
               <p className="eyebrow">Pricing</p>
               <h1>Choose the right signal stack for your team.</h1>
               <p className="lead">
-                Five tiers built for investors, analysts, and institutions that need
+                Five tiers built for investors, students, and institutions that need
                 dependable market intelligence.
               </p>
               <div className="cta-row">
@@ -115,7 +115,7 @@ export default function Pricing() {
 
             <div className="hero-card">
               <div className="hero-note">
-                All tiers include a dedicated analyst brief and quarterly macro
+                All tiers include a dedicated research brief and quarterly macro
                 updates. Upgrade anytime as coverage expands.
               </div>
             </div>
@@ -173,7 +173,7 @@ export default function Pricing() {
               <ul className="pricing-list">
                 <li>30 cities included</li>
                 <li>Live alerts + heatmaps</li>
-                <li>Analyst review calls</li>
+                <li>Research review calls</li>
               </ul>
               <button className="btn primary">Start Plus</button>
             </div>
@@ -188,7 +188,7 @@ export default function Pricing() {
               <ul className="pricing-list">
                 <li>75 cities included</li>
                 <li>Custom risk overlays</li>
-                <li>Dedicated analyst desk</li>
+                <li>Dedicated research desk</li>
               </ul>
               <button className="btn primary">Talk to Sales</button>
             </div>

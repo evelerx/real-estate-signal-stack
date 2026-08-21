@@ -132,7 +132,7 @@ export default function DataSheet() {
     <div className="sheet-shell">
       <header className="sheet-header">
         <div>
-          <p className="sheet-kicker">Analyst Workspace</p>
+          <p className="sheet-kicker">Admin Workspace</p>
           <h1>Master Data Sheet</h1>
         </div>
         <div className="sheet-actions">

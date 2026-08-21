@@ -8,7 +8,7 @@ import "./HomeConsultation.css";
 
 const problemPoints = [
   "Property decisions are still made from scattered broker inputs, outdated reports, and emotional price expectations.",
-  "Students, analysts, and small investors struggle to compare micro-markets with a consistent risk framework.",
+  "Students, investors, and small buyers struggle to compare micro-markets with a consistent risk framework.",
   "Fast-growing corridors change quickly, but most tools do not combine demand, infrastructure, supply pressure, and builder reliability.",
 ];
 
@@ -23,7 +23,7 @@ const solutionSteps = [
   },
   {
     title: "Support Decisions",
-    text: "Dashboards help users compare areas, review investor activity, update analyst inputs, and prepare cleaner market research.",
+    text: "Dashboards help users compare areas, review investor activity, update admin inputs, and prepare cleaner market research.",
   },
 ];
 
@@ -32,7 +32,7 @@ const modules = [
   "City and micro-market comparison",
   "Investor dashboard for capital-flow analysis",
   "Enterprise workbench for risk and memo generation",
-  "Admin console for staff access and analyst inputs",
+  "Admin console for access and market inputs",
   "Consultation capture for real users or project demos",
 ];
 
@@ -194,7 +194,7 @@ export default function Home() {
               <p className="eyebrow">Real Life Problem</p>
               <h2>Real estate choices need data, but the data is fragmented.</h2>
               <p>
-                Buyers, investors, and analysts often compare locations through hearsay, manual
+                Buyers, investors, and students often compare locations through hearsay, manual
                 spreadsheets, and disconnected market reports. This makes it difficult to identify
                 which area is genuinely improving, which one carries supply risk, and where capital
                 should be deployed with confidence.
@@ -252,8 +252,8 @@ export default function Home() {
               <p className="eyebrow">What the Website Does</p>
               <h2>A complete project, not just a static presentation.</h2>
               <p>
-                The application includes a public introduction, protected staff access, scoring APIs,
-                analyst tools, enterprise views, and a working frontend that consumes backend data.
+                The application includes a public introduction, protected Admin access, scoring APIs,
+                admin tools, enterprise views, and a working frontend that consumes backend data.
               </p>
             </div>
             <div className="module-grid">
@@ -272,7 +272,7 @@ export default function Home() {
             <h2>Try the core market-analysis engine.</h2>
             <p>
               Select a geography and review the same signal output used across the platform. The
-              rest of the dashboards remain available through staff access.
+              rest of the dashboards remain available through Admin access.
             </p>
           </div>
           <div className="signal-grid">

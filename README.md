@@ -10,7 +10,7 @@ https://real-estate-signal-stack.vercel.app
 
 ## Problem Statement
 
-Students, analysts, and small investors often compare real-estate locations using scattered signals: infrastructure news, developer reputation, online demand, price movement, supply pipeline, and local liquidity. These signals are hard to compare consistently, and decisions can become subjective.
+Students, investors, and small buyers often compare real-estate locations using scattered signals: infrastructure news, developer reputation, online demand, price movement, supply pipeline, and local liquidity. These signals are hard to compare consistently, and decisions can become subjective.
 
 This project solves that by converting local market indicators into structured scores, risk probabilities, confidence bands, heatmaps, and explainable reports.
 
@@ -96,7 +96,7 @@ confidence =
   72
   + builder_reliability_normalized * 0.12
   + connectivity_normalized * 0.08
-  - abs(analyst_delta) * 28
+  - abs(admin_override_delta) * 28
   - risk_deduction * 0.45
   - risk_probability * 0.16
 ```

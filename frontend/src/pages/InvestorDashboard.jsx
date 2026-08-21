@@ -159,7 +159,7 @@ export default function InvestorDashboard() {
   if (!accessToken) {
     return (
       <div className="investor-shell">
-        <p className="investor-error">Login required. Open staff access first.</p>
+        <p className="investor-error">Login required. Open Admin access first.</p>
       </div>
     );
   }
@@ -176,7 +176,7 @@ export default function InvestorDashboard() {
     return (
       <div className="investor-shell">
         <p className="investor-error">
-          {error || "Investor workspace did not load. Check role access and subscription unlock."}
+          {error || "Investor workspace did not load. Check Admin access and subscription unlock."}
         </p>
         <div className="investor-actions">
           <button className="investor-btn" onClick={() => navigate("/pricing")}>
@@ -257,7 +257,7 @@ export default function InvestorDashboard() {
           <p className="investor-eyebrow">Investor Profile</p>
           <h1>Real Estate Portfolio Dashboard</h1>
           <p className="investor-muted">
-            Role: <strong>{role}</strong> | As of {workspace.as_of}
+            Portal: <strong>{role}</strong> | As of {workspace.as_of}
           </p>
         </div>
         <div className="investor-actions">
@@ -271,7 +271,7 @@ export default function InvestorDashboard() {
             Master Data Sheet
           </button>
           <button className="investor-btn" onClick={() => navigate("/admin")}>
-            Staff Console
+            Admin Console
           </button>
           <button className="investor-btn investor-btn-primary">Save / Alert</button>
         </div>

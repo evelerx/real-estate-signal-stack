@@ -1045,7 +1045,7 @@ export default function Admin() {
                 </p>
               </div>
               <div className="card">
-                <h3>Analyst Review Layer</h3>
+                <h3>Admin Review Layer</h3>
                 <p>
                   Validate and clean inputs with one Admin-controlled workflow and
                   structured updates for each corridor.

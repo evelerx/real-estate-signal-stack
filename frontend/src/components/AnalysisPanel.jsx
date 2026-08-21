@@ -512,7 +512,7 @@ export default function AnalysisPanel({ selection }) {
                 <li>Model family: {modelFormula.model_family || "transparent hybrid ML scoring"}.</li>
                 <li>Score formula: {modelFormula.score_formula || "weighted composite of normalized market indicators"}.</li>
                 <li>Risk formula: {modelFormula.risk_formula || "logistic probability over supply and execution indicators"}.</li>
-                <li>Confidence score accounts for analyst overrides, model risk, and data quality bands.</li>
+                <li>Confidence score accounts for admin overrides, model risk, and data quality bands.</li>
                 <li>Manual intel entries are time-stamped and tied to the selected corridor.</li>
               </ul>
               <div className="report-range-grid">

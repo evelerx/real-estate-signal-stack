@@ -99,7 +99,7 @@ confidence =
   72
   + builder_reliability_normalized * 0.12
   + connectivity_normalized * 0.08
-  - abs(analyst_delta) * 28
+  - abs(admin_override_delta) * 28
   - risk_deduction * 0.45
   - risk_probability * 0.16
 ```

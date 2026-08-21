@@ -9,7 +9,7 @@ import {
  * - data: [{ quarter, score, adjusted, locked }]
  * - area: string
  * - snapshotVersion: string
- * - analystId: string
+ * - analystId: string, retained for backend audit compatibility
  * - onApply(adjustments)
  */
 export default function AdminAdjustmentOverlay({
@@ -74,7 +74,7 @@ export default function AdminAdjustmentOverlay({
       alert("Adjustments & notes saved");
     } catch (e) {
       console.error(e);
-      alert(e.message || "Failed to save analyst inputs");
+      alert(e.message || "Failed to save admin inputs");
     } finally {
       setSaving(false);
     }
@@ -82,7 +82,7 @@ export default function AdminAdjustmentOverlay({
 
   return (
     <div className="admin-overlay">
-      <h4>Manual Analyst Adjustments</h4>
+      <h4>Manual Admin Adjustments</h4>
 
       {data.map((d) => {
         const locked = d.locked === true;
