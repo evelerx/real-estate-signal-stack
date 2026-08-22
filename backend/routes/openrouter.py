@@ -16,6 +16,7 @@ ALLOWED_ROLES = ["admin"]
 class OpenRouterChatInput(BaseModel):
     model: str = Field(default="openrouter/auto")
     messages: list[dict] = Field(default_factory=list)
+    max_tokens: int = Field(default=48, ge=1, le=220)
     local_usage_usd: float = Field(default=0.0, ge=0)
     local_limit_usd: float = Field(default=DEFAULT_USAGE_LIMIT_USD, gt=0)
 
@@ -54,6 +55,7 @@ def chat(
             api_key=_read_key(openrouter_api_key),
             model=payload.model,
             messages=payload.messages,
+            max_tokens=payload.max_tokens,
             local_usage_usd=payload.local_usage_usd,
             local_limit_usd=payload.local_limit_usd,
         )

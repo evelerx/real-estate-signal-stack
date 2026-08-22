@@ -54,6 +54,9 @@ export function clearOpenRouterConfig() {
 
 export async function fetchOpenRouterKeyStatus(token) {
   const config = getOpenRouterConfig();
+  if (!config.enabled || !config.apiKey) {
+    throw new Error("Save an enabled OpenRouter key before checking it.");
+  }
   const res = await fetch("/api/openrouter/key-status", {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -65,4 +68,47 @@ export async function fetchOpenRouterKeyStatus(token) {
     throw new Error(body.detail || "Failed to check OpenRouter key");
   }
   return res.json();
+}
+
+export async function testOpenRouterConnection(token) {
+  const config = getOpenRouterConfig();
+  if (!config.enabled || !config.apiKey) {
+    throw new Error("Save an enabled OpenRouter key before running a test.");
+  }
+  if (config.localUsageUsd >= config.usageLimitUsd) {
+    throw new Error("Local OpenRouter usage cap reached. Clear or replace the key configuration to continue.");
+  }
+
+  const res = await fetch("/api/openrouter/chat", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "X-OpenRouter-Api-Key": config.apiKey,
+    },
+    body: JSON.stringify({
+      model: config.model,
+      messages: [{ role: "user", content: "Reply with exactly: OpenRouter connection verified." }],
+      max_tokens: 20,
+      local_usage_usd: config.localUsageUsd,
+      local_limit_usd: config.usageLimitUsd,
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || "OpenRouter test request failed");
+  }
+
+  const payload = await res.json();
+  const cost = Number(payload?.usage?.cost);
+  const nextUsage = Number.isFinite(cost) && cost > 0
+    ? Math.min(config.usageLimitUsd, config.localUsageUsd + cost)
+    : config.localUsageUsd;
+  saveOpenRouterConfig({ ...config, localUsageUsd: nextUsage });
+
+  return {
+    text: payload?.choices?.[0]?.message?.content || "OpenRouter responded without text.",
+    cost: Number.isFinite(cost) ? cost : null,
+    localUsageUsd: nextUsage,
+  };
 }

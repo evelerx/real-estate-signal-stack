@@ -41,6 +41,7 @@ import {
   fetchOpenRouterKeyStatus,
   getOpenRouterConfig,
   saveOpenRouterConfig,
+  testOpenRouterConnection,
 } from "../services/openRouterConfig";
 import {
   fetchModelAudit,
@@ -452,18 +453,27 @@ export default function Admin() {
     setLiveApiMessage("Live data API key removed from this browser.");
   }
 
-  function handleOpenRouterSubmit(e) {
+  async function handleOpenRouterSubmit(e) {
     e.preventDefault();
     const saved = saveOpenRouterConfig({
       ...openRouterForm,
       usageLimitUsd: 0.008,
     });
     setOpenRouterForm(saved);
-    setOpenRouterMessage(
-      saved.enabled
-        ? "OpenRouter key saved with a local $0.008 usage cap."
-        : "OpenRouter key saved but disabled."
-    );
+    if (!saved.enabled) {
+      setOpenRouterMessage("OpenRouter key saved but disabled.");
+      return;
+    }
+    setOpenRouterMessage("Key saved. Verifying the connection...");
+    try {
+      const status = await fetchOpenRouterKeyStatus(accessToken);
+      const remaining = status.limit_remaining === null || status.limit_remaining === undefined
+        ? "not set"
+        : `$${Number(status.limit_remaining).toFixed(4)}`;
+      setOpenRouterMessage(`Key verified. OpenRouter remaining limit: ${remaining}. Local project cap: $0.0080.`);
+    } catch (err) {
+      setOpenRouterMessage(`Key saved locally, but verification failed: ${err.message || "Unknown error"}`);
+    }
   }
 
   function handleClearOpenRouter() {
@@ -485,6 +495,18 @@ export default function Admin() {
       );
     } catch (err) {
       setOpenRouterMessage(err.message || "Could not verify OpenRouter key.");
+    }
+  }
+
+  async function handleOpenRouterTest() {
+    if (!accessToken) return;
+    setOpenRouterMessage("Sending a small capped test request...");
+    try {
+      const result = await testOpenRouterConnection(accessToken);
+      const cost = result.cost === null ? "provider did not report cost" : `$${result.cost.toFixed(6)}`;
+      setOpenRouterMessage(`AI test succeeded: ${result.text} Cost: ${cost}.`);
+    } catch (err) {
+      setOpenRouterMessage(err.message || "OpenRouter test request failed.");
     }
   }
 
@@ -1214,7 +1236,7 @@ export default function Admin() {
                 <form className="card admin-form" onSubmit={handleOpenRouterSubmit}>
                   <h3>OpenRouter AI Key</h3>
                   <p>
-                    Use this for future AI-assisted analysis. Create the API key in OpenRouter and
+                    Verify this key with a small AI request before using it for AI-assisted analysis. Create the API key in OpenRouter and
                     set the official key limit to 0.008 USD. This project also enforces a local
                     $0.008 cap before making OpenRouter calls.
                   </p>
@@ -1273,6 +1295,9 @@ export default function Admin() {
                     </button>
                     <button className="btn ghost" type="button" onClick={handleOpenRouterStatus}>
                       Check Key
+                    </button>
+                    <button className="btn ghost" type="button" onClick={handleOpenRouterTest}>
+                      Test AI Response
                     </button>
                     <button className="btn ghost" type="button" onClick={handleClearOpenRouter}>
                       Clear Key

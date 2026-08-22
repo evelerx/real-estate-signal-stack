@@ -66,6 +66,7 @@ def chat_completion(
     messages: List[Dict],
     local_usage_usd: float,
     local_limit_usd: float = DEFAULT_USAGE_LIMIT_USD,
+    max_tokens: int = 48,
 ) -> Dict:
     if local_usage_usd >= local_limit_usd:
         raise ValueError("Local OpenRouter usage cap reached")
@@ -76,7 +77,7 @@ def chat_completion(
         {
             "model": model or "openrouter/auto",
             "messages": messages,
-            "max_tokens": 220,
+            "max_tokens": max_tokens,
             "temperature": 0.2,
         },
     )
