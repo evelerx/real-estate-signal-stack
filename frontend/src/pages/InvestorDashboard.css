@@ -94,6 +94,37 @@
   grid-column: span 8;
 }
 
+.investor-density-card {
+  grid-column: span 12;
+}
+
+.investor-density-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 0.8rem;
+}
+
+.investor-density-card .density-map-wrap {
+  min-height: 560px;
+}
+
+.investor-density-status,
+.investor-density-selection {
+  margin-top: 0.75rem;
+  font-size: 0.86rem;
+}
+
+.investor-density-status {
+  color: #9fb2c8;
+}
+
+.investor-density-selection {
+  color: #8fe5c1;
+  font-weight: 600;
+}
+
 .investor-card.kpi h2 {
   font-size: 2rem;
   margin: 0.3rem 0;
@@ -339,6 +370,14 @@
 
   .investor-actions {
     width: 100%;
+  }
+
+  .investor-density-heading {
+    flex-direction: column;
+  }
+
+  .investor-density-heading .investor-btn {
+    width: auto;
   }
 
   .investor-btn {

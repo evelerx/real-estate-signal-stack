@@ -19,7 +19,8 @@ export default function Heatmap() {
         if (!active) return;
         const nextRows = Array.isArray(data) ? data : [];
         setRows(nextRows);
-        setStatus(nextRows.length ? `Live density updated for ${nextRows.length} tracked micro-markets.` : "No area signals are available.");
+        const isLiveProvider = nextRows.some((row) => row.data_source === "live_provider");
+        setStatus(nextRows.length ? `${isLiveProvider ? "Live provider" : "Model baseline"} updated for ${nextRows.length} tracked micro-markets.` : "No area signals are available.");
       } catch (error) {
         if (active) setStatus(error.message || "Could not load the area density data.");
       }

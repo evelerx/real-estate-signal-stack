@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Bar,
@@ -24,10 +24,12 @@ import {
 } from "../services/cityIntelApi";
 import { fetchDeveloperIntelligenceLayer } from "../services/developerIntelApi";
 import { fetchDealSurvivalLayer } from "../services/dealSurvivalApi";
+import { fetchAreaHeatmap } from "../services/api";
 import "./InvestorDashboard.css";
 
 const DASHBOARD_TABS = [
   { id: "summary", label: "Summary" },
+  { id: "investment_density", label: "Investment Density" },
   { id: "transactions", label: "Transactions" },
   { id: "known_holdings", label: "Known Holdings" },
   { id: "mortgage_debt", label: "Mortgage Debt" },
@@ -40,6 +42,8 @@ const RELATIONSHIP_TABS = [
 ];
 
 const ACTIVITY_COLORS = { acquisition_b: "#5b8dff", disposition_b: "#7be0e7", net_b: "#f4a340" };
+const LIVE_REFRESH_MS = 30_000;
+const MapboxDensityMap = lazy(() => import("../components/MapboxDensityMap"));
 const ENTERPRISE_2CR_FEATURES = [
   "City heatmaps",
   "Risk scoring",
@@ -96,6 +100,9 @@ export default function InvestorDashboard() {
   const [microRows, setMicroRows] = useState([]);
   const [developerRows, setDeveloperRows] = useState([]);
   const [dealSurvivalRows, setDealSurvivalRows] = useState([]);
+  const [densityRows, setDensityRows] = useState([]);
+  const [densityStatus, setDensityStatus] = useState("Open this tab to load live investment density.");
+  const [densitySelection, setDensitySelection] = useState(null);
 
   const filters = useMemo(
     () => ({
@@ -124,10 +131,51 @@ export default function InvestorDashboard() {
   }, [accessToken, relationshipType]);
 
   useEffect(() => {
-    if (!accessToken || activeTab === "summary") return;
+    if (!accessToken || activeTab === "summary" || activeTab === "investment_density") return;
     fetchDashboardTabData(accessToken, activeTab)
       .then((rows) => setTabRows(Array.isArray(rows) ? rows : []))
       .catch((err) => setError(err.message || "Failed to load tab data"));
+  }, [accessToken, activeTab]);
+
+  useEffect(() => {
+    if (!accessToken || activeTab !== "investment_density") return undefined;
+
+    let active = true;
+    let timerId = null;
+
+    async function loadDensity() {
+      try {
+        const payload = await fetchAreaHeatmap({}, { forceLive: true });
+        if (!active) return;
+        const rows = Array.isArray(payload) ? payload.sort((a, b) => Number(b.score) - Number(a.score)) : [];
+        setDensityRows(rows);
+        const isLiveProvider = rows.some((row) => row.data_source === "live_provider");
+        setDensityStatus(
+          rows.length
+            ? `${isLiveProvider ? "Live provider" : "Model baseline"} refreshed for ${rows.length} micro-markets. Higher intensity indicates stronger investment suitability.`
+            : "No investment-density records were returned."
+        );
+      } catch (err) {
+        if (active) setDensityStatus(err.message || "Could not load investment-density data.");
+      }
+    }
+
+    function refreshWhenVisible() {
+      window.clearInterval(timerId);
+      if (document.visibilityState !== "visible") return;
+      loadDensity();
+      timerId = window.setInterval(loadDensity, LIVE_REFRESH_MS);
+    }
+
+    refreshWhenVisible();
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+    window.addEventListener("live-data-config:changed", refreshWhenVisible);
+    return () => {
+      active = false;
+      window.clearInterval(timerId);
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
+      window.removeEventListener("live-data-config:changed", refreshWhenVisible);
+    };
   }, [accessToken, activeTab]);
 
   useEffect(() => {
@@ -813,6 +861,27 @@ export default function InvestorDashboard() {
             </div>
           </section>
         </div>
+      ) : activeTab === "investment_density" ? (
+        <section className="investor-card wide investor-density-card">
+          <div className="investor-density-heading">
+            <div>
+              <h3>Live Investment Density: Best to Worst</h3>
+              <p className="investor-muted">
+                Scores combine the currently available market signals into a ranked density layer.
+              </p>
+            </div>
+            <a className="investor-btn" href="/admin#tools">Manage Live Data Key</a>
+          </div>
+          <Suspense fallback={<p className="investor-muted">Loading investment density map...</p>}>
+            <MapboxDensityMap rows={densityRows} onSelect={setDensitySelection} />
+          </Suspense>
+          <p className="investor-density-status" aria-live="polite">{densityStatus}</p>
+          <p className="investor-density-selection" aria-live="polite">
+            {densitySelection
+              ? `${densitySelection.name}, ${densitySelection.city}: ${Number(densitySelection.score).toFixed(1)} investment suitability score.`
+              : "Select a point to inspect the investment suitability score."}
+          </p>
+        </section>
       ) : (
         <section className="investor-card">
           <h3>{DASHBOARD_TABS.find((x) => x.id === activeTab)?.label}</h3>

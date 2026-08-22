@@ -120,6 +120,11 @@ def fetch_wakad_heatmap(api_key: str | None = None) -> List[Dict]:
                 "city": str(item.get("city", "Pune")).strip() or "Pune",
                 "state": str(item.get("state", "Maharashtra")).strip()
                 or "Maharashtra",
+                "latitude": item.get("latitude", item.get("lat")),
+                "longitude": item.get("longitude", item.get("lng")),
+                "demand_score": item.get("demand_score"),
+                "supply_risk": item.get("supply_risk"),
+                "updated_at": item.get("updated_at"),
             }
         )
 

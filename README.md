@@ -166,6 +166,19 @@ The project is deployed on Vercel. Production is served from:
 https://real-estate-signal-stack.vercel.app
 ```
 
+## Live Investment Density
+
+The Investor Dashboard includes an **Investment Density** tab. It polls every 30 seconds only while that tab and browser window are visible.
+
+For a live market-data feed, choose **Custom Market Data API** in Admin, add the provider key, and configure these Vercel environment variables with the provider's server-side endpoints:
+
+```text
+WAKAD_DATA_API_KEY_HEADER=X-API-Key
+WAKAD_HEATMAP_API_URL=https://your-provider.example/heatmap
+```
+
+The provider should return micro-market records with a 0-100 `score`; optional `latitude`, `longitude`, and `updated_at` fields make the map more precise. Without a configured provider response, the interface explicitly labels the map as a model baseline rather than live-provider data.
+
 ## Notes For Evaluation
 
 - The system is not only a static website; it includes backend scoring APIs.

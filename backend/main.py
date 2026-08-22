@@ -368,12 +368,19 @@ def get_area_heatmap(
     state: Optional[str] = None,
     area: Optional[str] = None,
     live_data_api_key: Optional[str] = Header(None, alias="X-Live-Data-Api-Key"),
+    live_data_provider: Optional[str] = Header(None, alias="X-Live-Data-Provider"),
 ):
-    if is_wakad(area):
+    provider = (live_data_provider or "").strip().lower()
+    use_live_provider = provider == "custom_market_data" and bool(live_data_api_key)
+
+    if is_wakad(area) or use_live_provider:
         try:
-            return fetch_wakad_heatmap(api_key=live_data_api_key)
+            live_rows = fetch_wakad_heatmap(api_key=live_data_api_key)
+            for row in live_rows:
+                row["data_source"] = "live_provider"
+            return live_rows
         except (ValueError, RuntimeError):
-            # Fall back to local computed data when external Wakad feed is unavailable.
+            # The dashboard stays available with its model baseline if the provider is unavailable.
             pass
 
     results = []
@@ -398,6 +405,7 @@ def get_area_heatmap(
             "score": score,
             "city": area["city"],
             "state": area["state"],
+            "data_source": "model_baseline",
         })
 
     return results

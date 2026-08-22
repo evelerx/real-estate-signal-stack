@@ -41,7 +41,7 @@ function makeGeoJson(rows) {
     features: rows.map((row) => ({
       type: "Feature",
       geometry: { type: "Point", coordinates: getCoordinates(row) },
-      properties: { id: row.id ?? row.name, name: row.name ?? "Area", city: row.city ?? "Unknown city", state: row.state ?? "", score: Number(row.score ?? 0) },
+      properties: { id: row.id ?? row.name, name: row.name ?? "Area", city: row.city ?? "Unknown city", state: row.state ?? "", score: Number(row.score ?? 0), dataSource: row.data_source ?? "model_baseline", updatedAt: row.updated_at ?? "" },
     })),
   };
 }
@@ -55,7 +55,9 @@ function createPopupNode(properties) {
   location.textContent = [properties.city, properties.state].filter(Boolean).join(", ");
   const score = document.createElement("b");
   score.textContent = `${Number(properties.score).toFixed(1)} score`;
-  node.append(title, location, score);
+  const source = document.createElement("small");
+  source.textContent = properties.dataSource === "live_provider" ? "Live provider data" : "Model baseline";
+  node.append(title, location, score, source);
   return node;
 }
 

@@ -10,4 +10,5 @@
 .density-popup strong { font-size: 14px; }
 .density-popup span { color: #625d55; font-size: 12px; }
 .density-popup b { margin-top: 2px; color: #0f3d2e; font-size: 12px; }
+.density-popup small { color: #625d55; font-size: 11px; }
 @media (max-width: 640px) { .density-map-wrap { min-height: 62vh; } .density-map-legend { right: 14px; left: 14px; bottom: 16px; justify-content: space-between; gap: 6px; font-size: 11px; } .density-map-ramp { flex: 1; max-width: 100px; } .density-map-error { right: 14px; bottom: 62px; left: 14px; } }
