@@ -1,0 +1,13 @@
+.density-map-wrap { position: relative; min-height: min(68vh, 720px); border: 1px solid var(--stroke); border-radius: 10px; overflow: hidden; background: #dce7e4; }
+.density-map { position: absolute; inset: 0; }
+.density-map .maplibregl-ctrl-group { border-radius: 6px; box-shadow: 0 8px 22px rgba(18, 17, 15, 0.18); }
+.density-map .maplibregl-ctrl-group button { width: 32px; height: 32px; }
+.density-map .maplibregl-ctrl-attrib { font-size: 10px; }
+.density-map-legend { position: absolute; left: 16px; bottom: 20px; z-index: 2; display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: 6px; background: rgba(255, 255, 255, 0.92); box-shadow: 0 6px 20px rgba(18, 17, 15, 0.15); color: #2d2a25; font-size: 12px; font-weight: 600; }
+.density-map-ramp { width: 110px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #1f7a8c, #2fb7a0, #e3b44d, #c85d39); }
+.density-map-error { position: absolute; right: 16px; bottom: 18px; z-index: 2; max-width: 360px; padding: 8px 10px; border-radius: 6px; background: rgba(255, 250, 245, 0.94); color: #8d321d; font-size: 12px; }
+.density-popup { display: grid; gap: 3px; min-width: 144px; color: #27221c; font-family: "Manrope", system-ui, sans-serif; }
+.density-popup strong { font-size: 14px; }
+.density-popup span { color: #625d55; font-size: 12px; }
+.density-popup b { margin-top: 2px; color: #0f3d2e; font-size: 12px; }
+@media (max-width: 640px) { .density-map-wrap { min-height: 62vh; } .density-map-legend { right: 14px; left: 14px; bottom: 16px; justify-content: space-between; gap: 6px; font-size: 11px; } .density-map-ramp { flex: 1; max-width: 100px; } .density-map-error { right: 14px; bottom: 62px; left: 14px; } }

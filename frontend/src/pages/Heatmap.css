@@ -1,0 +1,5 @@
+.heatmap-page { background: var(--bg); }
+.map-page-content { width: min(1200px, calc(100% - 3rem)); margin: 0 auto; }
+.map-page-status, .map-page-selection { margin-top: 0.85rem; color: var(--ink-muted); font-size: 0.9rem; }
+.map-page-selection { color: var(--accent); font-weight: 600; }
+@media (max-width: 600px) { .map-page-content { width: min(100% - 2rem, 1200px); } }

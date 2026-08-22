@@ -1,12 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import Home from "../pages/Home";
 import Admin from "../pages/Admin";
-import Heatmap from "../pages/Heatmap";
 import Pricing from "../pages/Pricing";
 import InvestorDashboard from "../pages/InvestorDashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import EnterpriseWorkbench from "../pages/EnterpriseWorkbench";
 import DataSheet from "../pages/DataSheet";
+
+const Heatmap = lazy(() => import("../pages/Heatmap"));
 
 export default function AppRouter() {
   return (
@@ -43,7 +45,9 @@ export default function AppRouter() {
           path="/heatmap"
           element={
             <ProtectedRoute allow={["admin"]}>
-              <Heatmap />
+              <Suspense fallback={<div className="panel">Loading density map...</div>}>
+                <Heatmap />
+              </Suspense>
             </ProtectedRoute>
           }
         />
