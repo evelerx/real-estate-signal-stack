@@ -19,7 +19,7 @@ export function getGoogleDataConfig() {
       mapsApiKey,
       searchApiKey,
       searchEngineId,
-      enabled: Boolean(parsed.enabled && mapsApiKey && searchApiKey && searchEngineId),
+      enabled: Boolean(parsed.enabled && mapsApiKey),
     };
   } catch {
     return DEFAULT_CONFIG;
@@ -33,7 +33,7 @@ export function saveGoogleDataConfig(config) {
     searchEngineId: String(config.searchEngineId || "").trim(),
     enabled: Boolean(config.enabled),
   };
-  next.enabled = Boolean(next.enabled && next.mapsApiKey && next.searchApiKey && next.searchEngineId);
+  next.enabled = Boolean(next.enabled && next.mapsApiKey);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   window.dispatchEvent(new CustomEvent("google-data-config:changed", { detail: next }));
   return next;
@@ -48,7 +48,7 @@ export function clearGoogleDataConfig() {
 export async function verifyGoogleDataConfig(token) {
   const config = getGoogleDataConfig();
   if (!config.enabled) {
-    throw new Error("Save all enabled Google credentials before testing the connection.");
+    throw new Error("Save an enabled Maps and Places API key before testing the connection.");
   }
 
   const res = await fetch("/api/google-data/verify", {

@@ -32,8 +32,8 @@ def verify_google_data_credentials(
     search_engine_id: str | None,
 ) -> dict:
     maps_key = _require(maps_api_key, "Google Maps API key")
-    search_key = _require(search_api_key, "Google Search API key")
-    search_engine = _require(search_engine_id, "Google Search Engine ID")
+    search_key = (search_api_key or "").strip()
+    search_engine = (search_engine_id or "").strip()
 
     places_request = Request(
         "https://places.googleapis.com/v1/places:searchText",
@@ -48,12 +48,17 @@ def verify_google_data_credentials(
     places_payload = _read_json(places_request)
     places_ok = bool(places_payload.get("places"))
 
-    query = urlencode({"key": search_key, "cx": search_engine, "q": "MahaRERA project registration"})
-    search_payload = _read_json(Request(f"https://www.googleapis.com/customsearch/v1?{query}"))
-    search_ok = bool(search_payload.get("items"))
+    search_status = "not configured - embedded search widget remains available"
+    if search_key and search_engine:
+        try:
+            query = urlencode({"key": search_key, "cx": search_engine, "q": "MahaRERA project registration"})
+            search_payload = _read_json(Request(f"https://www.googleapis.com/customsearch/v1?{query}"))
+            search_status = "connected" if search_payload.get("items") else "no results returned"
+        except RuntimeError:
+            search_status = "blocked by Google - embedded search widget remains available"
 
     return {
         "places": "connected" if places_ok else "no results returned",
         "routes": "optional - using map-distance fallback",
-        "programmable_search": "connected" if search_ok else "no results returned",
+        "programmable_search": search_status,
     }

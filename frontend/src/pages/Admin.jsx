@@ -1279,7 +1279,8 @@ export default function Admin() {
                   <p>
                     Use Google Maps JavaScript and Places for locality enrichment. Routes is optional;
                     this project falls back to map distance when it is unavailable. Programmable Search
-                    also needs its own API key and Search Engine ID.
+                    API verification is optional; the embedded search widget works with the Search
+                    Engine ID alone.
                   </p>
                   <label className="admin-field">
                     <span className="admin-field-label">Maps JavaScript and Places API Key</span>
