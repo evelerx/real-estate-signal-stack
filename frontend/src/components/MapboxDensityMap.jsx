@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Map, NavigationControl, Popup } from "maplibre-gl";
+import { Map, Marker, NavigationControl, Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./MapboxDensityMap.css";
 
@@ -61,11 +61,42 @@ function createPopupNode(properties) {
   return node;
 }
 
+function markerColor(score) {
+  if (score >= 85) return "#b84b38";
+  if (score >= 72) return "#d39d37";
+  if (score >= 58) return "#2ca58d";
+  return "#1d607a";
+}
+
+function refreshDensityMarkers(map, collection, markersRef, onSelectRef) {
+  markersRef.current.forEach((marker) => marker.remove());
+  markersRef.current = collection.features.map((feature) => {
+    const element = document.createElement("div");
+    const score = Number(feature.properties.score || 0);
+    const size = Math.max(8, Math.min(18, 7 + score / 9));
+    element.className = "density-map-marker";
+    element.style.width = `${size}px`;
+    element.style.height = `${size}px`;
+    element.style.backgroundColor = markerColor(score);
+    element.setAttribute("role", "button");
+    element.setAttribute("aria-label", `${feature.properties.name}: ${score.toFixed(1)} score`);
+    element.addEventListener("click", () => {
+      new Popup({ closeButton: false, offset: 12 })
+        .setLngLat([...feature.geometry.coordinates])
+        .setDOMContent(createPopupNode(feature.properties))
+        .addTo(map);
+      onSelectRef.current?.(feature.properties);
+    });
+    return new Marker({ element, anchor: "center" }).setLngLat([...feature.geometry.coordinates]).addTo(map);
+  });
+}
+
 export default function MapboxDensityMap({ rows = [], onSelect }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const readyRef = useRef(false);
   const onSelectRef = useRef(onSelect);
+  const markersRef = useRef([]);
   const [mapError, setMapError] = useState("");
   const geoJson = useMemo(() => makeGeoJson(rows), [rows]);
   const geoJsonRef = useRef(geoJson);
@@ -89,14 +120,14 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
           "heatmap-weight": ["interpolate", ["linear"], ["get", "score"], 40, 0.2, 100, 1],
           "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 4, 0.75, 9, 1.5],
           "heatmap-color": ["interpolate", ["linear"], ["heatmap-density"], 0, "rgba(15, 61, 46, 0)", 0.2, "#1f7a8c", 0.45, "#2fb7a0", 0.68, "#e3b44d", 0.9, "#c85d39"],
-          "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 4, 22, 8, 42, 11, 58],
+          "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 3.25, 54, 6, 48, 11, 58],
           "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 8, 0.8, 11, 0.2],
         },
       });
       map.addLayer({
-        id: "area-density-points", type: "circle", source: "area-density", minzoom: 5,
+        id: "area-density-points", type: "circle", source: "area-density", minzoom: 3.25,
         paint: {
-          "circle-radius": ["interpolate", ["linear"], ["get", "score"], 40, 5, 100, 12],
+          "circle-radius": ["interpolate", ["linear"], ["get", "score"], 40, 7, 100, 15],
           "circle-color": ["interpolate", ["linear"], ["get", "score"], 45, "#1d607a", 65, "#2ca58d", 80, "#d39d37", 95, "#b84b38"],
           "circle-stroke-color": "rgba(255, 255, 255, 0.9)", "circle-stroke-width": 1.25, "circle-opacity": 0.95,
         },
@@ -113,17 +144,22 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
           .addTo(map);
         onSelectRef.current?.(properties);
       });
+      refreshDensityMarkers(map, geoJsonRef.current, markersRef, onSelectRef);
     });
     map.on("error", (event) => {
       if (!event.error?.message?.includes("source")) setMapError("The basemap could not be loaded. Area-density points remain available when the connection is restored.");
     });
-    return () => { readyRef.current = false; map.remove(); mapRef.current = null; };
+    return () => { readyRef.current = false; markersRef.current.forEach((marker) => marker.remove()); map.remove(); mapRef.current = null; };
   }, []);
 
   useEffect(() => {
     geoJsonRef.current = geoJson;
     const source = readyRef.current ? mapRef.current?.getSource("area-density") : null;
-    if (source) source.setData(geoJson);
+    if (source) {
+      source.setData(geoJson);
+      refreshDensityMarkers(mapRef.current, geoJson, markersRef, onSelectRef);
+      mapRef.current.triggerRepaint();
+    }
   }, [geoJson]);
 
   return (
