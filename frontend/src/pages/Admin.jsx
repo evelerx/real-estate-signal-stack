@@ -1277,11 +1277,12 @@ export default function Admin() {
                 <form className="card admin-form" onSubmit={handleGoogleDataSubmit}>
                   <h3>Google Data Connections</h3>
                   <p>
-                    One Google Maps key covers Maps JavaScript, Places, and Routes. Programmable
-                    Search also needs its own API key and Search Engine ID.
+                    Use Google Maps JavaScript and Places for locality enrichment. Routes is optional;
+                    this project falls back to map distance when it is unavailable. Programmable Search
+                    also needs its own API key and Search Engine ID.
                   </p>
                   <label className="admin-field">
-                    <span className="admin-field-label">Maps, Places, and Routes API Key</span>
+                    <span className="admin-field-label">Maps JavaScript and Places API Key</span>
                     <input
                       type="password"
                       placeholder="AIza..."

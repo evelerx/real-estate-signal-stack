@@ -48,31 +48,12 @@ def verify_google_data_credentials(
     places_payload = _read_json(places_request)
     places_ok = bool(places_payload.get("places"))
 
-    routes_request = Request(
-        "https://routes.googleapis.com/directions/v2:computeRoutes",
-        data=json.dumps(
-            {
-                "origin": {"location": {"latLng": {"latitude": 18.5204, "longitude": 73.8567}}},
-                "destination": {"location": {"latLng": {"latitude": 19.076, "longitude": 72.8777}}},
-                "travelMode": "DRIVE",
-            }
-        ).encode("utf-8"),
-        headers={
-            "Content-Type": "application/json",
-            "X-Goog-Api-Key": maps_key,
-            "X-Goog-FieldMask": "routes.distanceMeters",
-        },
-        method="POST",
-    )
-    routes_payload = _read_json(routes_request)
-    routes_ok = bool(routes_payload.get("routes"))
-
     query = urlencode({"key": search_key, "cx": search_engine, "q": "MahaRERA project registration"})
     search_payload = _read_json(Request(f"https://www.googleapis.com/customsearch/v1?{query}"))
     search_ok = bool(search_payload.get("items"))
 
     return {
         "places": "connected" if places_ok else "no results returned",
-        "routes": "connected" if routes_ok else "no routes returned",
+        "routes": "optional - using map-distance fallback",
         "programmable_search": "connected" if search_ok else "no results returned",
     }
