@@ -20,6 +20,28 @@ const BASEMAP_STYLE = {
   layers: [{ id: "open-street-map", type: "raster", source: "openStreetMap" }],
 };
 
+const INDIA_STATES_GEOJSON_URL = "https://raw.githubusercontent.com/india-in-data/india-states-2019/master/india_states.geojson";
+const EMPTY_GEOJSON = { type: "FeatureCollection", features: [] };
+
+const STATE_ALIASES = {
+  "andaman and nicobar": "andaman and nicobar islands",
+  "dadra and nagar haveli": "dadra and nagar haveli and daman and diu",
+  "daman and diu": "dadra and nagar haveli and daman and diu",
+  "jammu and kashmir": "jammu and kashmir",
+  "nct of delhi": "delhi",
+  orissa: "odisha",
+  pondicherry: "puducherry",
+};
+
+function normaliseStateName(value) {
+  const normalised = String(value ?? "")
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+  return STATE_ALIASES[normalised] ?? normalised;
+}
+
 function hashValue(value) {
   return [...String(value)].reduce((total, char) => ((total << 5) - total + char.charCodeAt(0)) | 0, 0);
 }
@@ -46,6 +68,44 @@ function makeGeoJson(rows) {
   };
 }
 
+function makeStateGeoJson(boundaries, rows) {
+  if (!boundaries?.features) return EMPTY_GEOJSON;
+
+  const scoreTotals = new Map();
+  rows.forEach((row) => {
+    const state = normaliseStateName(row.state);
+    const score = Number(row.score);
+    if (!state || !Number.isFinite(score)) return;
+    const current = scoreTotals.get(state) ?? { total: 0, count: 0 };
+    scoreTotals.set(state, { total: current.total + score, count: current.count + 1 });
+  });
+
+  const directScores = [...scoreTotals.values()].map(({ total, count }) => total / count);
+  const nationalBaseline = directScores.length
+    ? directScores.reduce((total, score) => total + score, 0) / directScores.length
+    : 65;
+
+  return {
+    ...boundaries,
+    features: boundaries.features.map((feature) => {
+      const stateName = feature.properties?.ST_NM ?? feature.properties?.State_Name ?? "Unknown state";
+      const matchingScore = scoreTotals.get(normaliseStateName(stateName));
+      const hasDirectScore = Boolean(matchingScore);
+      const score = hasDirectScore ? matchingScore.total / matchingScore.count : nationalBaseline;
+      return {
+        ...feature,
+        properties: {
+          ...feature.properties,
+          stateName,
+          score: Number(score.toFixed(1)),
+          scoreCoverage: hasDirectScore ? "live market signals" : "national baseline estimate",
+          hasDirectScore,
+        },
+      };
+    }),
+  };
+}
+
 function createPopupNode(properties) {
   const node = document.createElement("div");
   node.className = "density-popup";
@@ -58,6 +118,19 @@ function createPopupNode(properties) {
   const source = document.createElement("small");
   source.textContent = properties.dataSource === "live_provider" ? "Live provider data" : "Model baseline";
   node.append(title, location, score, source);
+  return node;
+}
+
+function createStatePopupNode(properties) {
+  const node = document.createElement("div");
+  node.className = "density-popup";
+  const title = document.createElement("strong");
+  title.textContent = properties.stateName;
+  const score = document.createElement("b");
+  score.textContent = `${Number(properties.score).toFixed(1)} state signal`;
+  const source = document.createElement("small");
+  source.textContent = properties.scoreCoverage;
+  node.append(title, score, source);
   return node;
 }
 
@@ -98,10 +171,27 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
   const onSelectRef = useRef(onSelect);
   const markersRef = useRef([]);
   const [mapError, setMapError] = useState("");
+  const [stateBoundaries, setStateBoundaries] = useState(null);
   const geoJson = useMemo(() => makeGeoJson(rows), [rows]);
+  const stateGeoJson = useMemo(() => makeStateGeoJson(stateBoundaries, rows), [stateBoundaries, rows]);
   const geoJsonRef = useRef(geoJson);
+  const stateGeoJsonRef = useRef(stateGeoJson);
 
   useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(INDIA_STATES_GEOJSON_URL)
+      .then((response) => {
+        if (!response.ok) throw new Error(`Boundary request failed (${response.status})`);
+        return response.json();
+      })
+      .then((data) => { if (!cancelled) setStateBoundaries(data); })
+      .catch(() => {
+        if (!cancelled) setMapError("State boundaries could not be loaded. The micro-market density layer is still available.");
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return undefined;
@@ -113,6 +203,18 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
 
     map.on("load", () => {
       readyRef.current = true;
+      map.addSource("state-density", { type: "geojson", data: stateGeoJsonRef.current });
+      map.addLayer({
+        id: "state-density-fill", type: "fill", source: "state-density",
+        paint: {
+          "fill-color": ["interpolate", ["linear"], ["get", "score"], 40, "#1d607a", 58, "#2ca58d", 72, "#d39d37", 90, "#b84b38"],
+          "fill-opacity": ["case", ["get", "hasDirectScore"], 0.62, 0.38],
+        },
+      });
+      map.addLayer({
+        id: "state-density-outline", type: "line", source: "state-density",
+        paint: { "line-color": "rgba(16, 55, 68, 0.72)", "line-width": 1.15, "line-opacity": 0.86 },
+      });
       map.addSource("area-density", { type: "geojson", data: geoJsonRef.current });
       map.addLayer({
         id: "area-density-heat", type: "heatmap", source: "area-density", maxzoom: 11,
@@ -144,6 +246,16 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
           .addTo(map);
         onSelectRef.current?.(properties);
       });
+      map.on("mouseenter", "state-density-fill", () => { map.getCanvas().style.cursor = "pointer"; });
+      map.on("mouseleave", "state-density-fill", () => { map.getCanvas().style.cursor = ""; });
+      map.on("click", "state-density-fill", (event) => {
+        const feature = event.features?.[0];
+        if (!feature?.properties) return;
+        new Popup({ closeButton: false, offset: 8 })
+          .setLngLat(event.lngLat)
+          .setDOMContent(createStatePopupNode(feature.properties))
+          .addTo(map);
+      });
       refreshDensityMarkers(map, geoJsonRef.current, markersRef, onSelectRef);
     });
     map.on("error", (event) => {
@@ -162,10 +274,19 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
     }
   }, [geoJson]);
 
+  useEffect(() => {
+    stateGeoJsonRef.current = stateGeoJson;
+    const source = readyRef.current ? mapRef.current?.getSource("state-density") : null;
+    if (source) {
+      source.setData(stateGeoJson);
+      mapRef.current.triggerRepaint();
+    }
+  }, [stateGeoJson]);
+
   return (
     <div className="density-map-wrap">
       <div className="density-map" ref={mapContainerRef} aria-label="Area score density map of India" />
-      <div className="density-map-legend" aria-label="Capital allocation score legend"><span>Lower signal</span><div className="density-map-ramp" /><span>Higher signal</span></div>
+      <div className="density-map-legend" aria-label="State investment signal legend"><span>Lower signal</span><div className="density-map-ramp" /><span>Higher signal</span></div>
       {mapError && <p className="density-map-error" role="status">{mapError}</p>}
     </div>
   );
