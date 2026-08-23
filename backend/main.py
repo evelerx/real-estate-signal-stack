@@ -16,6 +16,7 @@ from routes.intel import router as intel_router
 from routes.enterprise import router as enterprise_router
 from routes.investor_dashboard import router as investor_dashboard_router
 from routes.openrouter import router as openrouter_router
+from routes.google_data import router as google_data_router
 from routes.public import router as public_router
 from services.analyst_admin import router as analyst_router
 from services.analyst_admin import ANALYST_ADJUSTMENTS
@@ -68,6 +69,7 @@ app.include_router(intel_router)
 app.include_router(investor_dashboard_router)
 app.include_router(enterprise_router)
 app.include_router(openrouter_router)
+app.include_router(google_data_router)
 app.include_router(public_router)
 
 # =========================================================

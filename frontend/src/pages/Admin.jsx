@@ -44,6 +44,12 @@ import {
   testOpenRouterConnection,
 } from "../services/openRouterConfig";
 import {
+  clearGoogleDataConfig,
+  getGoogleDataConfig,
+  saveGoogleDataConfig,
+  verifyGoogleDataConfig,
+} from "../services/googleDataConfig";
+import {
   fetchModelAudit,
   fetchModelMethodology,
   fetchModelTraceability,
@@ -414,6 +420,8 @@ export default function Admin() {
   const [liveApiMessage, setLiveApiMessage] = useState("");
   const [openRouterForm, setOpenRouterForm] = useState(() => getOpenRouterConfig());
   const [openRouterMessage, setOpenRouterMessage] = useState("");
+  const [googleDataForm, setGoogleDataForm] = useState(() => getGoogleDataConfig());
+  const [googleDataMessage, setGoogleDataMessage] = useState("");
   const [modelMethodology, setModelMethodology] = useState(null);
   const [modelAudit, setModelAudit] = useState(null);
   const [modelTraceability, setModelTraceability] = useState(null);
@@ -451,6 +459,38 @@ export default function Admin() {
     const cleared = clearLiveDataConfig();
     setLiveApiForm(cleared);
     setLiveApiMessage("Live data API key removed from this browser.");
+  }
+
+  async function handleGoogleDataSubmit(e) {
+    e.preventDefault();
+    const saved = saveGoogleDataConfig(googleDataForm);
+    setGoogleDataForm(saved);
+    if (!saved.enabled) {
+      setGoogleDataMessage("Google credentials saved but disabled or incomplete.");
+      return;
+    }
+    setGoogleDataMessage("Credentials saved. Testing Google connections...");
+    try {
+      const result = await verifyGoogleDataConfig(accessToken);
+      setGoogleDataMessage(`Connected: Places ${result.places}, Routes ${result.routes}, Search ${result.programmable_search}.`);
+    } catch (err) {
+      setGoogleDataMessage(err.message || "Google API verification failed.");
+    }
+  }
+
+  function handleClearGoogleData() {
+    const cleared = clearGoogleDataConfig();
+    setGoogleDataForm(cleared);
+    setGoogleDataMessage("Google credentials removed from this browser.");
+  }
+
+  async function handleGoogleDataVerify() {
+    try {
+      const result = await verifyGoogleDataConfig(accessToken);
+      setGoogleDataMessage(`Connected: Places ${result.places}, Routes ${result.routes}, Search ${result.programmable_search}.`);
+    } catch (err) {
+      setGoogleDataMessage(err.message || "Google API verification failed.");
+    }
   }
 
   async function handleOpenRouterSubmit(e) {
@@ -1229,6 +1269,56 @@ export default function Admin() {
                     </button>
                   </div>
                   {liveApiMessage && <span className="admin-field-help">{liveApiMessage}</span>}
+                </form>
+              )}
+
+              {(canManageData || canManageAll) && (
+                <form className="card admin-form" onSubmit={handleGoogleDataSubmit}>
+                  <h3>Google Data Connections</h3>
+                  <p>
+                    One Google Maps key covers Maps JavaScript, Places, and Routes. Programmable
+                    Search also needs its own API key and Search Engine ID.
+                  </p>
+                  <label className="admin-field">
+                    <span className="admin-field-label">Maps, Places, and Routes API Key</span>
+                    <input
+                      type="password"
+                      placeholder="AIza..."
+                      value={googleDataForm.mapsApiKey}
+                      onChange={(e) => setGoogleDataForm({ ...googleDataForm, mapsApiKey: e.target.value })}
+                    />
+                  </label>
+                  <label className="admin-field">
+                    <span className="admin-field-label">Programmable Search API Key</span>
+                    <input
+                      type="password"
+                      placeholder="AIza..."
+                      value={googleDataForm.searchApiKey}
+                      onChange={(e) => setGoogleDataForm({ ...googleDataForm, searchApiKey: e.target.value })}
+                    />
+                  </label>
+                  <label className="admin-field">
+                    <span className="admin-field-label">Programmable Search Engine ID</span>
+                    <input
+                      placeholder="cx value"
+                      value={googleDataForm.searchEngineId}
+                      onChange={(e) => setGoogleDataForm({ ...googleDataForm, searchEngineId: e.target.value })}
+                    />
+                  </label>
+                  <label className="admin-role-option">
+                    <input
+                      type="checkbox"
+                      checked={googleDataForm.enabled}
+                      onChange={(e) => setGoogleDataForm({ ...googleDataForm, enabled: e.target.checked })}
+                    />
+                    Enable Google location and search enrichment
+                  </label>
+                  <div className="admin-status-buttons">
+                    <button className="btn primary" type="submit">Save and Verify</button>
+                    <button className="btn ghost" type="button" onClick={handleGoogleDataVerify}>Verify Connections</button>
+                    <button className="btn ghost" type="button" onClick={handleClearGoogleData}>Clear Google Keys</button>
+                  </div>
+                  {googleDataMessage && <span className="admin-field-help">{googleDataMessage}</span>}
                 </form>
               )}
 
