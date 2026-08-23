@@ -3,7 +3,7 @@ const STORAGE_KEY = "google_data_config_v1";
 const DEFAULT_CONFIG = {
   mapsApiKey: "",
   searchApiKey: "",
-  searchEngineId: "",
+  searchEngineId: "d639f6a1b3f634ac0",
   enabled: false,
 };
 
@@ -14,7 +14,7 @@ export function getGoogleDataConfig() {
     const parsed = JSON.parse(raw);
     const mapsApiKey = String(parsed.mapsApiKey || "").trim();
     const searchApiKey = String(parsed.searchApiKey || "").trim();
-    const searchEngineId = String(parsed.searchEngineId || "").trim();
+    const searchEngineId = String(parsed.searchEngineId || DEFAULT_CONFIG.searchEngineId).trim();
     return {
       mapsApiKey,
       searchApiKey,

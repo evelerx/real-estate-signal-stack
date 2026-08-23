@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GeoSelector from "../components/GeoSelector";
+import GoogleProgrammableSearch from "../components/GoogleProgrammableSearch";
 import { useAuth } from "../context/AuthContext";
 import { loginStaff } from "../services/staffApi";
 import {
@@ -1320,6 +1321,13 @@ export default function Admin() {
                   </div>
                   {googleDataMessage && <span className="admin-field-help">{googleDataMessage}</span>}
                 </form>
+              )}
+
+              {(canManageData || canManageAll) && googleDataForm.searchEngineId && (
+                <section className="card admin-form google-search-card">
+                  <h3>Google Source Search</h3>
+                  <GoogleProgrammableSearch searchEngineId={googleDataForm.searchEngineId} />
+                </section>
               )}
 
               {(canManageData || canManageAll) && (
