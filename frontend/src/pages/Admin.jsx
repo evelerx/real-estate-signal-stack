@@ -43,6 +43,7 @@ import {
   getOpenRouterConfig,
   saveOpenRouterConfig,
   testOpenRouterConnection,
+  testOpenRouterWebResearch,
 } from "../services/openRouterConfig";
 import {
   clearGoogleDataConfig,
@@ -636,6 +637,20 @@ export default function Admin() {
       setOpenRouterMessage(`AI test succeeded: ${result.text} Cost: ${cost}.`);
     } catch (err) {
       setOpenRouterMessage(err.message || "OpenRouter test request failed.");
+    }
+  }
+
+  async function handleOpenRouterWebTest() {
+    if (!accessToken) return;
+    setOpenRouterMessage("Running one tightly capped live-web research test...");
+    try {
+      const result = await testOpenRouterWebResearch(accessToken);
+      const cost = result.cost === null ? "provider did not report cost" : `$${result.cost.toFixed(6)}`;
+      setOpenRouterMessage(
+        `Live-web test succeeded with ${result.citations.length} cited source(s). ${result.text} Cost: ${cost}.`
+      );
+    } catch (err) {
+      setOpenRouterMessage(err.message || "OpenRouter web-search test failed.");
     }
   }
 
@@ -1575,6 +1590,9 @@ export default function Admin() {
                     </button>
                     <button className="btn ghost" type="button" onClick={handleOpenRouterTest}>
                       Test AI Response
+                    </button>
+                    <button className="btn ghost" type="button" onClick={handleOpenRouterWebTest}>
+                      Test Live Web Research
                     </button>
                     <button className="btn ghost" type="button" onClick={handleClearOpenRouter}>
                       Clear Key

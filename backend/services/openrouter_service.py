@@ -67,17 +67,22 @@ def chat_completion(
     local_usage_usd: float,
     local_limit_usd: float = DEFAULT_USAGE_LIMIT_USD,
     max_tokens: int = 48,
+    web_search: bool = False,
 ) -> Dict:
     if local_usage_usd >= local_limit_usd:
         raise ValueError("Local OpenRouter usage cap reached")
 
-    return _request(
-        "/chat/completions",
-        api_key,
-        {
-            "model": model or "openrouter/auto",
-            "messages": messages,
-            "max_tokens": max_tokens,
-            "temperature": 0.2,
-        },
-    )
+    payload: Dict = {
+        "model": model or "openrouter/auto",
+        "messages": messages,
+        "max_tokens": max_tokens,
+        "temperature": 0.2,
+    }
+    if web_search:
+        payload["tools"] = [
+            {
+                "type": "openrouter:web_search",
+                "parameters": {"engine": "exa", "max_results": 3},
+            }
+        ]
+    return _request("/chat/completions", api_key, payload)

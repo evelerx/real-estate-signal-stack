@@ -71,12 +71,31 @@ export async function fetchOpenRouterKeyStatus(token) {
 }
 
 export async function testOpenRouterConnection(token) {
+  return runOpenRouterTest(token, {
+    content: "Reply with exactly: OpenRouter connection verified.",
+    maxTokens: 20,
+    webSearch: false,
+  });
+}
+
+export async function testOpenRouterWebResearch(token) {
+  return runOpenRouterTest(token, {
+    content: "Search the web for one current, cited real-estate market signal for Pune, India. Reply in two concise sentences and include source links.",
+    maxTokens: 90,
+    webSearch: true,
+  });
+}
+
+async function runOpenRouterTest(token, { content, maxTokens, webSearch }) {
   const config = getOpenRouterConfig();
   if (!config.enabled || !config.apiKey) {
     throw new Error("Save an enabled OpenRouter key before running a test.");
   }
   if (config.localUsageUsd >= config.usageLimitUsd) {
     throw new Error("Local OpenRouter usage cap reached. Clear or replace the key configuration to continue.");
+  }
+  if (webSearch && config.usageLimitUsd - config.localUsageUsd < 0.005) {
+    throw new Error("At least $0.005 of the local cap must remain for an OpenRouter web-search test.");
   }
 
   const res = await fetch("/api/openrouter/chat", {
@@ -88,8 +107,9 @@ export async function testOpenRouterConnection(token) {
     },
     body: JSON.stringify({
       model: config.model,
-      messages: [{ role: "user", content: "Reply with exactly: OpenRouter connection verified." }],
-      max_tokens: 20,
+      messages: [{ role: "user", content }],
+      max_tokens: maxTokens,
+      web_search: webSearch,
       local_usage_usd: config.localUsageUsd,
       local_limit_usd: config.usageLimitUsd,
     }),
@@ -110,5 +130,8 @@ export async function testOpenRouterConnection(token) {
     text: payload?.choices?.[0]?.message?.content || "OpenRouter responded without text.",
     cost: Number.isFinite(cost) ? cost : null,
     localUsageUsd: nextUsage,
+    citations: Array.isArray(payload?.choices?.[0]?.message?.annotations)
+      ? payload.choices[0].message.annotations.filter((item) => item?.type === "url_citation")
+      : [],
   };
 }

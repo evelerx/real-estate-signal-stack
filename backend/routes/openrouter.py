@@ -19,6 +19,7 @@ class OpenRouterChatInput(BaseModel):
     max_tokens: int = Field(default=48, ge=1, le=220)
     local_usage_usd: float = Field(default=0.0, ge=0)
     local_limit_usd: float = Field(default=DEFAULT_USAGE_LIMIT_USD, gt=0)
+    web_search: bool = False
 
 
 def _read_key(openrouter_api_key: str | None) -> str:
@@ -58,6 +59,7 @@ def chat(
             max_tokens=payload.max_tokens,
             local_usage_usd=payload.local_usage_usd,
             local_limit_usd=payload.local_limit_usd,
+            web_search=payload.web_search,
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
