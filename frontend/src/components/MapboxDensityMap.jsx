@@ -134,6 +134,34 @@ function fitIndia(map) {
   });
 }
 
+function makeRingPath(map, ring) {
+  return ring.map((coordinates, index) => {
+    const point = map.project({ lng: coordinates[0], lat: coordinates[1] });
+    return `${index === 0 ? "M" : "L"}${point.x.toFixed(1)} ${point.y.toFixed(1)}`;
+  }).join(" ") + " Z";
+}
+
+function makeStateOverlay(map, collection) {
+  const container = map.getContainer();
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+  if (!width || !height) return { width: 0, height: 0, features: [] };
+
+  const features = collection.features.map((feature, index) => {
+    const polygons = feature.geometry?.type === "Polygon"
+      ? [feature.geometry.coordinates]
+      : feature.geometry?.type === "MultiPolygon"
+        ? feature.geometry.coordinates
+        : [];
+    return {
+      id: `${feature.properties?.stateName ?? "state"}-${index}`,
+      path: polygons.flatMap((polygon) => polygon.map((ring) => makeRingPath(map, ring))).join(" "),
+      color: feature.properties?.stateColor ?? "#2ca58d",
+    };
+  });
+  return { width, height, features };
+}
+
 function makeStateGeoJson(boundaries, rows) {
   if (!boundaries?.features) return EMPTY_GEOJSON;
 
@@ -192,19 +220,6 @@ function createPopupNode(properties) {
   return node;
 }
 
-function createStatePopupNode(properties) {
-  const node = document.createElement("div");
-  node.className = "density-popup";
-  const title = document.createElement("strong");
-  title.textContent = properties.stateName;
-  const score = document.createElement("b");
-  score.textContent = `${Number(properties.score).toFixed(1)} state signal`;
-  const source = document.createElement("small");
-  source.textContent = properties.scoreCoverage;
-  node.append(title, score, source);
-  return node;
-}
-
 function markerColor(score) {
   if (score >= 85) return "#b84b38";
   if (score >= 72) return "#d39d37";
@@ -242,7 +257,9 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
   const onSelectRef = useRef(onSelect);
   const markersRef = useRef([]);
   const hasFittedStateViewRef = useRef(false);
+  const syncStateOverlayRef = useRef(null);
   const [mapError, setMapError] = useState("");
+  const [stateOverlay, setStateOverlay] = useState({ width: 0, height: 0, features: [] });
   const geoJson = useMemo(() => makeGeoJson(rows), [rows]);
   const stateGeoJson = useMemo(() => makeStateGeoJson(indiaStateBoundaries, rows), [rows]);
   const geoJsonRef = useRef(geoJson);
@@ -260,18 +277,6 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
 
     map.on("load", () => {
       readyRef.current = true;
-      map.addSource("state-density", { type: "geojson", data: stateGeoJsonRef.current });
-      map.addLayer({
-        id: "state-density-fill", type: "fill", source: "state-density",
-        paint: {
-          "fill-color": ["get", "stateColor"],
-          "fill-opacity": 0.66,
-        },
-      });
-      map.addLayer({
-        id: "state-density-outline", type: "line", source: "state-density",
-        paint: { "line-color": "rgba(16, 55, 68, 0.72)", "line-width": 1.15, "line-opacity": 0.86 },
-      });
       map.addSource("area-density", { type: "geojson", data: geoJsonRef.current });
       map.addLayer({
         id: "area-density-heat", type: "heatmap", source: "area-density", maxzoom: 11,
@@ -303,27 +308,22 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
           .addTo(map);
         onSelectRef.current?.(properties);
       });
-      map.on("mouseenter", "state-density-fill", () => { map.getCanvas().style.cursor = "pointer"; });
-      map.on("mouseleave", "state-density-fill", () => { map.getCanvas().style.cursor = ""; });
-      map.on("click", "state-density-fill", (event) => {
-        const feature = event.features?.[0];
-        if (!feature?.properties) return;
-        new Popup({ closeButton: false, offset: 8 })
-          .setLngLat(event.lngLat)
-          .setDOMContent(createStatePopupNode(feature.properties))
-          .addTo(map);
-      });
       if (stateGeoJsonRef.current.features.length && !hasFittedStateViewRef.current) {
         fitIndia(map);
         hasFittedStateViewRef.current = true;
       }
+      const syncStateOverlay = () => setStateOverlay(makeStateOverlay(map, stateGeoJsonRef.current));
+      syncStateOverlayRef.current = syncStateOverlay;
+      syncStateOverlay();
+      map.on("moveend", syncStateOverlay);
+      map.on("resize", syncStateOverlay);
       refreshDensityMarkers(map, geoJsonRef.current, markersRef, onSelectRef);
     });
     map.on("error", (event) => {
       const message = event.error?.message;
       if (message) setMapError(`Map layer error: ${message}`);
     });
-    return () => { readyRef.current = false; hasFittedStateViewRef.current = false; markersRef.current.forEach((marker) => marker.remove()); map.remove(); mapRef.current = null; };
+    return () => { readyRef.current = false; hasFittedStateViewRef.current = false; syncStateOverlayRef.current = null; markersRef.current.forEach((marker) => marker.remove()); map.remove(); mapRef.current = null; };
   }, []);
 
   useEffect(() => {
@@ -338,20 +338,23 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
 
   useEffect(() => {
     stateGeoJsonRef.current = stateGeoJson;
-    const source = readyRef.current ? mapRef.current?.getSource("state-density") : null;
-    if (source) {
-      source.setData(stateGeoJson);
+    if (readyRef.current && mapRef.current) {
       if (stateGeoJson.features.length && !hasFittedStateViewRef.current) {
         fitIndia(mapRef.current);
         hasFittedStateViewRef.current = true;
       }
-      mapRef.current.triggerRepaint();
+      syncStateOverlayRef.current?.();
     }
   }, [stateGeoJson]);
 
   return (
     <div className="density-map-wrap">
       <div className="density-map" ref={mapContainerRef} aria-label="Area score density map of India" />
+      <svg className="density-state-overlay" viewBox={`0 0 ${stateOverlay.width} ${stateOverlay.height}`} aria-hidden="true">
+        {stateOverlay.features.map((feature) => (
+          <path key={feature.id} d={feature.path} fill={feature.color} fillOpacity="0.62" stroke="rgba(16, 55, 68, 0.88)" strokeWidth="1.2" fillRule="evenodd" />
+        ))}
+      </svg>
       <div className="density-map-legend" aria-label="State investment signal legend"><span>Lower signal</span><div className="density-map-ramp" /><span>Higher signal</span></div>
       {mapError && <p className="density-map-error" role="status">{mapError}</p>}
     </div>
