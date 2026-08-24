@@ -46,6 +46,7 @@ import {
 } from "../services/openRouterConfig";
 import {
   clearGoogleDataConfig,
+  collectGoogleResearch,
   getGoogleDataConfig,
   saveGoogleDataConfig,
   verifyGoogleDataConfig,
@@ -423,6 +424,17 @@ export default function Admin() {
   const [openRouterMessage, setOpenRouterMessage] = useState("");
   const [googleDataForm, setGoogleDataForm] = useState(() => getGoogleDataConfig());
   const [googleDataMessage, setGoogleDataMessage] = useState("");
+  const [researchForm, setResearchForm] = useState({
+    target: "",
+    category: "market pricing and rental demand",
+  });
+  const [researchState, setResearchState] = useState({
+    loading: false,
+    message: "",
+    query: "",
+    results: [],
+  });
+  const [researchEvidence, setResearchEvidence] = useState({ title: "", url: "", snippet: "" });
   const [modelMethodology, setModelMethodology] = useState(null);
   const [modelAudit, setModelAudit] = useState(null);
   const [modelTraceability, setModelTraceability] = useState(null);
@@ -483,6 +495,82 @@ export default function Admin() {
     const cleared = clearGoogleDataConfig();
     setGoogleDataForm(cleared);
     setGoogleDataMessage("Google credentials removed from this browser.");
+  }
+
+  function getResearchTarget() {
+    return researchForm.target.trim() || selection.area || selection.city || "India";
+  }
+
+  function buildResearchQuery() {
+    return `${getResearchTarget()} real estate ${researchForm.category} India`;
+  }
+
+  function openPseFallback(query = buildResearchQuery()) {
+    const cx = String(googleDataForm.searchEngineId || "").trim();
+    if (!cx) {
+      setResearchState((previous) => ({
+        ...previous,
+        message: "Add and save a Programmable Search Engine ID before opening the fallback search.",
+      }));
+      return;
+    }
+    window.open(
+      `https://cse.google.com/cse?cx=${encodeURIComponent(cx)}&q=${encodeURIComponent(query)}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
+  async function handleResearchCollection() {
+    const query = buildResearchQuery();
+    setResearchState({ loading: true, message: "Collecting research from Google...", query, results: [] });
+    try {
+      const payload = await collectGoogleResearch(accessToken, query);
+      const results = Array.isArray(payload.results) ? payload.results : [];
+      setResearchState({
+        loading: false,
+        query,
+        results,
+        message: results.length
+          ? `Collected ${results.length} reviewable sources. Save only the sources that support a real metric or claim.`
+          : "Automatic search completed but returned no sources. Use the PSE fallback search.",
+      });
+    } catch (err) {
+      setResearchState({
+        loading: false,
+        query,
+        results: [],
+        message: `${err.message || "Automatic search is unavailable."} The fallback search is ready below.`,
+      });
+    }
+  }
+
+  async function saveResearchEvidence(evidence) {
+    const area = getResearchTarget();
+    if (!evidence?.title?.trim() || !evidence?.url?.trim()) {
+      setResearchState((previous) => ({ ...previous, message: "A source title and URL are required to save evidence." }));
+      return;
+    }
+    addValidation({
+      area,
+      summary: evidence.snippet?.trim()
+        ? `${evidence.title.trim()} - ${evidence.snippet.trim()}`
+        : evidence.title.trim(),
+      trend: researchForm.category,
+      confidence: "Source review required",
+      source: evidence.url.trim(),
+    });
+    await persistIntel(area);
+    setResearchState((previous) => ({
+      ...previous,
+      message: `Evidence saved for ${area}. It is stored as reviewable source evidence, not model-ready market data.`,
+    }));
+  }
+
+  async function handleManualResearchSave(e) {
+    e.preventDefault();
+    await saveResearchEvidence(researchEvidence);
+    setResearchEvidence({ title: "", url: "", snippet: "" });
   }
 
   async function handleGoogleDataVerify() {
@@ -1327,7 +1415,96 @@ export default function Admin() {
 
               {(canManageData || canManageAll) && googleDataForm.searchEngineId && (
                 <section className="card admin-form google-search-card">
-                  <h3>Google Source Search</h3>
+                  <h3>On-Demand Research Collection</h3>
+                  <p>
+                    Automatic collection uses the Programmable Search API when it is available. If
+                    Google blocks the API, open the PSE fallback, review its results, and save the
+                    relevant source as evidence.
+                  </p>
+                  <div className="admin-form-grid">
+                    <label className="admin-field">
+                      <span className="admin-field-label">Locality or Project</span>
+                      <input
+                        placeholder={selection.area || selection.city || "Example: Wakad, Pune"}
+                        value={researchForm.target}
+                        onChange={(e) => setResearchForm({ ...researchForm, target: e.target.value })}
+                      />
+                    </label>
+                    <label className="admin-field">
+                      <span className="admin-field-label">Research Focus</span>
+                      <select
+                        value={researchForm.category}
+                        onChange={(e) => setResearchForm({ ...researchForm, category: e.target.value })}
+                      >
+                        <option value="market pricing and rental demand">Market pricing and rental demand</option>
+                        <option value="MahaRERA registration and compliance">MahaRERA registration and compliance</option>
+                        <option value="infrastructure and connectivity projects">Infrastructure and connectivity</option>
+                        <option value="developer delivery and risk">Developer delivery and risk</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div className="admin-status-buttons">
+                    <button
+                      className="btn primary"
+                      type="button"
+                      onClick={handleResearchCollection}
+                      disabled={researchState.loading}
+                    >
+                      {researchState.loading ? "Collecting Sources..." : "Collect Required Sources"}
+                    </button>
+                    <button className="btn ghost" type="button" onClick={() => openPseFallback()}>
+                      Open PSE Fallback
+                    </button>
+                  </div>
+                  {researchState.message && <span className="admin-field-help">{researchState.message}</span>}
+                  {researchState.results.length > 0 && (
+                    <div className="admin-review">
+                      {researchState.results.map((result) => (
+                        <div className="admin-edit-row" key={result.url}>
+                          <a href={result.url} target="_blank" rel="noreferrer">{result.title}</a>
+                          {result.displayUrl && <span className="admin-field-help">{result.displayUrl}</span>}
+                          {result.snippet && <span>{result.snippet}</span>}
+                          <button className="btn ghost" type="button" onClick={() => saveResearchEvidence(result)}>
+                            Save Evidence
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <form className="admin-form" onSubmit={handleManualResearchSave}>
+                    <h4>Save a Reviewed PSE Result</h4>
+                    <div className="admin-form-grid">
+                      <label className="admin-field">
+                        <span className="admin-field-label">Source title</span>
+                        <input
+                          required
+                          placeholder="Paste a result title"
+                          value={researchEvidence.title}
+                          onChange={(e) => setResearchEvidence({ ...researchEvidence, title: e.target.value })}
+                        />
+                      </label>
+                      <label className="admin-field">
+                        <span className="admin-field-label">Source URL</span>
+                        <input
+                          required
+                          type="url"
+                          placeholder="https://..."
+                          value={researchEvidence.url}
+                          onChange={(e) => setResearchEvidence({ ...researchEvidence, url: e.target.value })}
+                        />
+                      </label>
+                    </div>
+                    <label className="admin-field">
+                      <span className="admin-field-label">Review note</span>
+                      <input
+                        placeholder="What this source supports"
+                        value={researchEvidence.snippet}
+                        onChange={(e) => setResearchEvidence({ ...researchEvidence, snippet: e.target.value })}
+                      />
+                    </label>
+                    <div><button className="btn ghost" type="submit">Save Reviewed Source</button></div>
+                  </form>
+                  <h4>Google Source Search</h4>
                   <GoogleProgrammableSearch searchEngineId={googleDataForm.searchEngineId} />
                 </section>
               )}

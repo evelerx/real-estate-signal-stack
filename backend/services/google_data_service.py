@@ -62,3 +62,33 @@ def verify_google_data_credentials(
         "routes": "optional - using map-distance fallback",
         "programmable_search": search_status,
     }
+
+
+def search_programmable_search(
+    search_api_key: str | None,
+    search_engine_id: str | None,
+    query_text: str | None,
+) -> dict:
+    """Fetch normalized, reviewable research results from Google's JSON API."""
+    api_key = _require(search_api_key, "Programmable Search API key")
+    search_engine = _require(search_engine_id, "Programmable Search Engine ID")
+    query = _require(query_text, "Research query")
+
+    params = urlencode({"key": api_key, "cx": search_engine, "q": query, "num": 10})
+    payload = _read_json(Request(f"https://www.googleapis.com/customsearch/v1?{params}"))
+    items = payload.get("items") or []
+
+    return {
+        "query": query,
+        "source": "google_programmable_search_api",
+        "results": [
+            {
+                "title": str(item.get("title") or "Untitled result"),
+                "url": str(item.get("link") or ""),
+                "snippet": str(item.get("snippet") or ""),
+                "displayUrl": str(item.get("displayLink") or ""),
+            }
+            for item in items
+            if item.get("link")
+        ],
+    }

@@ -64,3 +64,24 @@ export async function verifyGoogleDataConfig(token) {
   if (!res.ok) throw new Error(body.detail || "Google API verification failed");
   return body;
 }
+
+export async function collectGoogleResearch(token, query) {
+  const config = getGoogleDataConfig();
+  if (!config.searchApiKey || !config.searchEngineId) {
+    throw new Error("Programmable Search API key and Search Engine ID are required for automatic collection.");
+  }
+
+  const res = await fetch("/api/google-data/research-search", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "X-Google-Search-Api-Key": config.searchApiKey,
+      "X-Google-Search-Engine-Id": config.searchEngineId,
+    },
+    body: JSON.stringify({ query }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.detail || "Automatic Google research failed");
+  return body;
+}
