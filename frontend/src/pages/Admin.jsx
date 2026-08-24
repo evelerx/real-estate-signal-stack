@@ -646,8 +646,13 @@ export default function Admin() {
     try {
       const result = await testOpenRouterWebResearch(accessToken);
       const cost = result.cost === null ? "provider did not report cost" : `$${result.cost.toFixed(6)}`;
+      const sourceLabels = result.citations
+        .slice(0, 3)
+        .map((citation) => citation.url ? `${citation.title}: ${citation.url}` : citation.title)
+        .join(" | ");
+      const responseText = result.text || "The provider returned source citations without a written summary.";
       setOpenRouterMessage(
-        `Live-web test succeeded with ${result.citations.length} cited source(s). ${result.text} Cost: ${cost}.`
+        `Live-web test succeeded with ${result.citations.length} cited source(s). ${responseText} ${sourceLabels ? `Sources: ${sourceLabels}. ` : ""}Cost: ${cost}.`
       );
     } catch (err) {
       setOpenRouterMessage(err.message || "OpenRouter web-search test failed.");

@@ -126,12 +126,17 @@ async function runOpenRouterTest(token, { content, maxTokens, webSearch }) {
     : config.localUsageUsd;
   saveOpenRouterConfig({ ...config, localUsageUsd: nextUsage });
 
+  const annotations = Array.isArray(payload?.choices?.[0]?.message?.annotations)
+    ? payload.choices[0].message.annotations.filter((item) => item?.type === "url_citation")
+    : [];
+
   return {
-    text: payload?.choices?.[0]?.message?.content || "OpenRouter responded without text.",
+    text: payload?.choices?.[0]?.message?.content || "",
     cost: Number.isFinite(cost) ? cost : null,
     localUsageUsd: nextUsage,
-    citations: Array.isArray(payload?.choices?.[0]?.message?.annotations)
-      ? payload.choices[0].message.annotations.filter((item) => item?.type === "url_citation")
-      : [],
+    citations: annotations.map((item) => ({
+      title: item?.url_citation?.title || item?.url_citation?.url || "Cited source",
+      url: item?.url_citation?.url || "",
+    })),
   };
 }
