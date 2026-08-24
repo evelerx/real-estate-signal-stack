@@ -20,7 +20,7 @@ const BASEMAP_STYLE = {
   layers: [{ id: "open-street-map", type: "raster", source: "openStreetMap" }],
 };
 
-const INDIA_STATES_GEOJSON_URL = "https://raw.githubusercontent.com/india-in-data/india-states-2019/master/india_states.geojson";
+const INDIA_STATES_GEOJSON_URL = "/india-states.geojson";
 const EMPTY_GEOJSON = { type: "FeatureCollection", features: [] };
 
 const STATE_ALIASES = {
@@ -215,6 +215,7 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
   const readyRef = useRef(false);
   const onSelectRef = useRef(onSelect);
   const markersRef = useRef([]);
+  const hasFittedStateViewRef = useRef(false);
   const [mapError, setMapError] = useState("");
   const [stateBoundaries, setStateBoundaries] = useState(null);
   const geoJson = useMemo(() => makeGeoJson(rows), [rows]);
@@ -324,6 +325,14 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
     const source = readyRef.current ? mapRef.current?.getSource("state-density") : null;
     if (source) {
       source.setData(stateGeoJson);
+      if (stateGeoJson.features.length && !hasFittedStateViewRef.current) {
+        mapRef.current.fitBounds([[67.5, 6], [98.5, 37.5]], {
+          padding: { top: 36, right: 42, bottom: 68, left: 42 },
+          duration: 0,
+          maxZoom: 4.65,
+        });
+        hasFittedStateViewRef.current = true;
+      }
       mapRef.current.triggerRepaint();
     }
   }, [stateGeoJson]);
