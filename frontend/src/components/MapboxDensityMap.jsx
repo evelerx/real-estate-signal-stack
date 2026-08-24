@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Map as MapLibreMap, Marker, NavigationControl, Popup } from "maplibre-gl";
+import indiaStateBoundaries from "../assets/india-states.json";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./MapboxDensityMap.css";
 
@@ -20,7 +21,6 @@ const BASEMAP_STYLE = {
   layers: [{ id: "open-street-map", type: "raster", source: "openStreetMap" }],
 };
 
-const INDIA_STATES_GEOJSON_URL = "/india-states.geojson";
 const EMPTY_GEOJSON = { type: "FeatureCollection", features: [] };
 const INDIA_BOUNDS = [[67.5, 6], [98.5, 37.5]];
 
@@ -243,27 +243,12 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
   const markersRef = useRef([]);
   const hasFittedStateViewRef = useRef(false);
   const [mapError, setMapError] = useState("");
-  const [stateBoundaries, setStateBoundaries] = useState(null);
   const geoJson = useMemo(() => makeGeoJson(rows), [rows]);
-  const stateGeoJson = useMemo(() => makeStateGeoJson(stateBoundaries, rows), [stateBoundaries, rows]);
+  const stateGeoJson = useMemo(() => makeStateGeoJson(indiaStateBoundaries, rows), [rows]);
   const geoJsonRef = useRef(geoJson);
   const stateGeoJsonRef = useRef(stateGeoJson);
 
   useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch(INDIA_STATES_GEOJSON_URL)
-      .then((response) => {
-        if (!response.ok) throw new Error(`Boundary request failed (${response.status})`);
-        return response.json();
-      })
-      .then((data) => { if (!cancelled) setStateBoundaries(data); })
-      .catch(() => {
-        if (!cancelled) setMapError("State boundaries could not be loaded. The micro-market density layer is still available.");
-      });
-    return () => { cancelled = true; };
-  }, []);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return undefined;
