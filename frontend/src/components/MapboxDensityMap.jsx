@@ -68,6 +68,47 @@ function makeGeoJson(rows) {
   };
 }
 
+function getGeometryCenter(geometry) {
+  if (!geometry?.coordinates) return null;
+  let minLongitude = Infinity;
+  let maxLongitude = -Infinity;
+  let minLatitude = Infinity;
+  let maxLatitude = -Infinity;
+
+  const visit = (coordinates) => {
+    if (!Array.isArray(coordinates)) return;
+    if (typeof coordinates[0] === "number" && typeof coordinates[1] === "number") {
+      const [longitude, latitude] = coordinates;
+      minLongitude = Math.min(minLongitude, longitude);
+      maxLongitude = Math.max(maxLongitude, longitude);
+      minLatitude = Math.min(minLatitude, latitude);
+      maxLatitude = Math.max(maxLatitude, latitude);
+      return;
+    }
+    coordinates.forEach(visit);
+  };
+
+  visit(geometry.coordinates);
+  if (!Number.isFinite(minLongitude) || !Number.isFinite(minLatitude)) return null;
+  return [(minLongitude + maxLongitude) / 2, (minLatitude + maxLatitude) / 2];
+}
+
+function estimateSpatialScore(center, samples, fallbackScore) {
+  if (!center || !samples.length) return fallbackScore;
+  let weightedTotal = 0;
+  let totalWeight = 0;
+  samples.forEach(({ coordinates, score }) => {
+    const averageLatitude = ((center[1] + coordinates[1]) / 2) * (Math.PI / 180);
+    const longitudeDistance = (coordinates[0] - center[0]) * Math.cos(averageLatitude);
+    const latitudeDistance = coordinates[1] - center[1];
+    const distance = Math.sqrt((longitudeDistance ** 2) + (latitudeDistance ** 2));
+    const weight = 1 / Math.max(distance, 0.35) ** 1.35;
+    weightedTotal += score * weight;
+    totalWeight += weight;
+  });
+  return totalWeight ? weightedTotal / totalWeight : fallbackScore;
+}
+
 function makeStateGeoJson(boundaries, rows) {
   if (!boundaries?.features) return EMPTY_GEOJSON;
 
@@ -80,9 +121,11 @@ function makeStateGeoJson(boundaries, rows) {
     scoreTotals.set(state, { total: current.total + score, count: current.count + 1 });
   });
 
-  const directScores = [...scoreTotals.values()].map(({ total, count }) => total / count);
-  const nationalBaseline = directScores.length
-    ? directScores.reduce((total, score) => total + score, 0) / directScores.length
+  const marketSamples = rows
+    .map((row) => ({ coordinates: getCoordinates(row), score: Number(row.score) }))
+    .filter((sample) => Number.isFinite(sample.score));
+  const nationalBaseline = marketSamples.length
+    ? marketSamples.reduce((total, sample) => total + sample.score, 0) / marketSamples.length
     : 65;
 
   return {
@@ -91,14 +134,16 @@ function makeStateGeoJson(boundaries, rows) {
       const stateName = feature.properties?.ST_NM ?? feature.properties?.State_Name ?? "Unknown state";
       const matchingScore = scoreTotals.get(normaliseStateName(stateName));
       const hasDirectScore = Boolean(matchingScore);
-      const score = hasDirectScore ? matchingScore.total / matchingScore.count : nationalBaseline;
+      const score = hasDirectScore
+        ? matchingScore.total / matchingScore.count
+        : estimateSpatialScore(getGeometryCenter(feature.geometry), marketSamples, nationalBaseline);
       return {
         ...feature,
         properties: {
           ...feature.properties,
           stateName,
           score: Number(score.toFixed(1)),
-          scoreCoverage: hasDirectScore ? "live market signals" : "national baseline estimate",
+          scoreCoverage: hasDirectScore ? "direct local-market average" : "spatial estimate from nearby market signals",
           hasDirectScore,
         },
       };
@@ -208,7 +253,7 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
         id: "state-density-fill", type: "fill", source: "state-density",
         paint: {
           "fill-color": ["interpolate", ["linear"], ["get", "score"], 40, "#1d607a", 58, "#2ca58d", 72, "#d39d37", 90, "#b84b38"],
-          "fill-opacity": ["case", ["get", "hasDirectScore"], 0.62, 0.38],
+          "fill-opacity": ["case", ["get", "hasDirectScore"], 0.68, 0.56],
         },
       });
       map.addLayer({
