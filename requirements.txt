@@ -3,4 +3,5 @@ uvicorn
 python-dotenv
 python-jose[cryptography]
 sqlalchemy
+psycopg[binary]
 pydantic

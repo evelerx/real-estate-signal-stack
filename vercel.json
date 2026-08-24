@@ -2,10 +2,6 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "frontend/dist",
-  "env": {
-    "DATABASE_URL": "sqlite:////tmp/staff_access.db",
-    "ANALYST_FLAGS_DB": "/tmp/analyst_flags.db"
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
