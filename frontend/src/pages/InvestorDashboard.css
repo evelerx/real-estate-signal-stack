@@ -83,6 +83,7 @@
 
 .investor-card {
   grid-column: span 4;
+  min-width: 0;
   background: linear-gradient(180deg, rgba(11, 33, 56, 0.94), rgba(7, 23, 40, 0.94));
   border: 1px solid rgba(80, 129, 171, 0.4);
   border-radius: 14px;
@@ -174,7 +175,9 @@
 
 .chart-h {
   width: 100%;
+  min-width: 0;
   height: 230px;
+  min-height: 230px;
 }
 
 .macro-heat-grid {

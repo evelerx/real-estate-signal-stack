@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Bar,
@@ -25,6 +25,7 @@ import {
 import { fetchDeveloperIntelligenceLayer } from "../services/developerIntelApi";
 import { fetchDealSurvivalLayer } from "../services/dealSurvivalApi";
 import { fetchAreaHeatmap } from "../services/api";
+import MapboxDensityMap from "../components/MapboxDensityMap";
 import "./InvestorDashboard.css";
 
 const DASHBOARD_TABS = [
@@ -43,7 +44,6 @@ const RELATIONSHIP_TABS = [
 
 const ACTIVITY_COLORS = { acquisition_b: "#5b8dff", disposition_b: "#7be0e7", net_b: "#f4a340" };
 const LIVE_REFRESH_MS = 30_000;
-const MapboxDensityMap = lazy(() => import("../components/MapboxDensityMap"));
 const ENTERPRISE_2CR_FEATURES = [
   "City heatmaps",
   "Risk scoring",
@@ -878,9 +878,7 @@ export default function InvestorDashboard() {
             </div>
             <a className="investor-btn" href="/admin#tools">Manage Live Data Key</a>
           </div>
-          <Suspense fallback={<p className="investor-muted">Loading investment density map...</p>}>
-            <MapboxDensityMap rows={densityRows} onSelect={setDensitySelection} />
-          </Suspense>
+          <MapboxDensityMap rows={densityRows} onSelect={setDensitySelection} />
           <p className="investor-density-status" aria-live="polite">{densityStatus}</p>
           <p className="investor-density-selection" aria-live="polite">
             {densitySelection
