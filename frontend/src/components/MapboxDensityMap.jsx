@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Map, Marker, NavigationControl, Popup } from "maplibre-gl";
+import { Map as MapLibreMap, Marker, NavigationControl, Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./MapboxDensityMap.css";
 
@@ -71,7 +71,7 @@ function makeGeoJson(rows) {
 function makeStateGeoJson(boundaries, rows) {
   if (!boundaries?.features) return EMPTY_GEOJSON;
 
-  const scoreTotals = new Map();
+  const scoreTotals = new globalThis.Map();
   rows.forEach((row) => {
     const state = normaliseStateName(row.state);
     const score = Number(row.score);
@@ -195,7 +195,7 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return undefined;
-    const map = new Map({
+    const map = new MapLibreMap({
       container: mapContainerRef.current, style: BASEMAP_STYLE, center: [78.9629, 22.5937], zoom: 4.15, minZoom: 3.25, maxZoom: 14, attributionControl: true,
     });
     mapRef.current = map;
