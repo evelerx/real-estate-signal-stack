@@ -22,6 +22,7 @@ const BASEMAP_STYLE = {
 
 const INDIA_STATES_GEOJSON_URL = "/india-states.geojson";
 const EMPTY_GEOJSON = { type: "FeatureCollection", features: [] };
+const INDIA_BOUNDS = [[67.5, 6], [98.5, 37.5]];
 
 const STATE_ALIASES = {
   "andaman and nicobar": "andaman and nicobar islands",
@@ -109,6 +110,30 @@ function estimateSpatialScore(center, samples, fallbackScore) {
   return totalWeight ? weightedTotal / totalWeight : fallbackScore;
 }
 
+function scoreToColor(score) {
+  const stops = [
+    [40, [29, 96, 122]],
+    [58, [44, 165, 141]],
+    [72, [211, 157, 55]],
+    [90, [184, 75, 56]],
+  ];
+  const clamped = Math.max(stops[0][0], Math.min(stops.at(-1)[0], Number(score) || 0));
+  const upperIndex = stops.findIndex(([stop]) => stop >= clamped);
+  const [lowerScore, lowerColor] = stops[Math.max(0, upperIndex - 1)];
+  const [upperScore, upperColor] = stops[Math.max(0, upperIndex)];
+  const position = upperScore === lowerScore ? 0 : (clamped - lowerScore) / (upperScore - lowerScore);
+  const color = lowerColor.map((value, index) => Math.round(value + ((upperColor[index] - value) * position)));
+  return `rgb(${color.join(",")})`;
+}
+
+function fitIndia(map) {
+  map.fitBounds(INDIA_BOUNDS, {
+    padding: { top: 36, right: 42, bottom: 68, left: 42 },
+    duration: 0,
+    maxZoom: 4.65,
+  });
+}
+
 function makeStateGeoJson(boundaries, rows) {
   if (!boundaries?.features) return EMPTY_GEOJSON;
 
@@ -129,7 +154,7 @@ function makeStateGeoJson(boundaries, rows) {
     : 65;
 
   return {
-    ...boundaries,
+    type: "FeatureCollection",
     features: boundaries.features.map((feature) => {
       const stateName = feature.properties?.ST_NM ?? feature.properties?.State_Name ?? "Unknown state";
       const matchingScore = scoreTotals.get(normaliseStateName(stateName));
@@ -143,6 +168,7 @@ function makeStateGeoJson(boundaries, rows) {
           ...feature.properties,
           stateName,
           score: Number(score.toFixed(1)),
+          stateColor: scoreToColor(score),
           scoreCoverage: hasDirectScore ? "direct local-market average" : "spatial estimate from nearby market signals",
           hasDirectScore,
         },
@@ -253,8 +279,8 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
       map.addLayer({
         id: "state-density-fill", type: "fill", source: "state-density",
         paint: {
-          "fill-color": ["interpolate", ["linear"], ["get", "score"], 40, "#1d607a", 58, "#2ca58d", 72, "#d39d37", 90, "#b84b38"],
-          "fill-opacity": ["case", ["get", "hasDirectScore"], 0.68, 0.56],
+          "fill-color": ["get", "stateColor"],
+          "fill-opacity": 0.66,
         },
       });
       map.addLayer({
@@ -302,12 +328,17 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
           .setDOMContent(createStatePopupNode(feature.properties))
           .addTo(map);
       });
+      if (stateGeoJsonRef.current.features.length && !hasFittedStateViewRef.current) {
+        fitIndia(map);
+        hasFittedStateViewRef.current = true;
+      }
       refreshDensityMarkers(map, geoJsonRef.current, markersRef, onSelectRef);
     });
     map.on("error", (event) => {
-      if (!event.error?.message?.includes("source")) setMapError("The basemap could not be loaded. Area-density points remain available when the connection is restored.");
+      const message = event.error?.message;
+      if (message) setMapError(`Map layer error: ${message}`);
     });
-    return () => { readyRef.current = false; markersRef.current.forEach((marker) => marker.remove()); map.remove(); mapRef.current = null; };
+    return () => { readyRef.current = false; hasFittedStateViewRef.current = false; markersRef.current.forEach((marker) => marker.remove()); map.remove(); mapRef.current = null; };
   }, []);
 
   useEffect(() => {
@@ -326,11 +357,7 @@ export default function MapboxDensityMap({ rows = [], onSelect }) {
     if (source) {
       source.setData(stateGeoJson);
       if (stateGeoJson.features.length && !hasFittedStateViewRef.current) {
-        mapRef.current.fitBounds([[67.5, 6], [98.5, 37.5]], {
-          padding: { top: 36, right: 42, bottom: 68, left: 42 },
-          duration: 0,
-          maxZoom: 4.65,
-        });
+        fitIndia(mapRef.current);
         hasFittedStateViewRef.current = true;
       }
       mapRef.current.triggerRepaint();

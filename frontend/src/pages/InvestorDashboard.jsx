@@ -103,6 +103,10 @@ export default function InvestorDashboard() {
   const [densityRows, setDensityRows] = useState([]);
   const [densityStatus, setDensityStatus] = useState("Open this tab to load live investment density.");
   const [densitySelection, setDensitySelection] = useState(null);
+  const densityUsesLiveProvider = useMemo(
+    () => densityRows.some((row) => row.data_source === "live_provider"),
+    [densityRows]
+  );
 
   const filters = useMemo(
     () => ({
@@ -865,9 +869,11 @@ export default function InvestorDashboard() {
         <section className="investor-card wide investor-density-card">
           <div className="investor-density-heading">
             <div>
-              <h3>Live Investment Density: Best to Worst</h3>
+              <h3>{densityUsesLiveProvider ? "Live Investment Density: Best to Worst" : "Investment Density: Best to Worst"}</h3>
               <p className="investor-muted">
-                Scores combine the currently available market signals into a ranked density layer.
+                {densityUsesLiveProvider
+                  ? "Scores combine current provider signals into a ranked density layer."
+                  : "Showing the model baseline until a live market-data provider responds."}
               </p>
             </div>
             <a className="investor-btn" href="/admin#tools">Manage Live Data Key</a>
